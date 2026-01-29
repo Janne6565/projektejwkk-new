@@ -1,10 +1,10 @@
-import type enCommon from '../i18n/en/common';
+import enCommon from '../i18n/en/common';
 
-declare module 'react-i18next' {
+declare module 'i18next' {
     interface CustomTypeOptions {
-        resources: {
-            translation: typeof enCommon;  // Use 'translation' or match your NS
-        };
         defaultNS: 'common';
+        resources: {
+            common: typeof enCommon;
+        };
     }
 }

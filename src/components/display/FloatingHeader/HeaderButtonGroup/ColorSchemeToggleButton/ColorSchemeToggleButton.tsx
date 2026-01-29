@@ -19,7 +19,6 @@ const ColorSchemeToggleButton = () => {
         </TooltipTrigger>
         <TooltipContent>
             {t("")}
-            Toggle Theme
         </TooltipContent>
     </Tooltip>
 }
