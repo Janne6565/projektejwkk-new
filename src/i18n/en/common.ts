@@ -11,4 +11,27 @@ export default {
     },
     languageSelector: 'Change language',
   },
+  projects: {
+    heroTitle: 'The Projects of Janne Keipert',
+    gridTitle: 'Projects',
+    contributions: 'contributions',
+    contributionsOnDay: 'contributions on this day',
+    lastActive: 'Last active',
+    liveDemo: 'Live Demo',
+    repos: 'repos',
+    repositories: 'Repositories',
+    appStore: 'App Store',
+    playStore: 'Play Store',
+    visitLink: 'Visit',
+    noProjects: 'No projects found',
+    loading: 'Loading projects...',
+    chart: {
+      less: 'Less',
+      more: 'More',
+    },
+    detail: {
+      contributionHistory: 'Contribution History',
+      additionalLinks: 'Links',
+    },
+  },
 } as const;

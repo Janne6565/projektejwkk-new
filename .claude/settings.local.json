@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:project-manager.jannekeipert.de)",
+      "Bash(bun add:*)",
+      "Bash(bunx shadcn@latest:*)",
+      "Bash(bun run:*)"
+    ]
+  }
+}
