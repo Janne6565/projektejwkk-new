@@ -20,8 +20,8 @@ export default {
   projects: {
     heroTitle: 'Die Projekte von Janne Keipert',
     gridTitle: 'Projekte',
-    contributions: 'Beitraege',
-    contributionsOnDay: 'Beitraege an diesem Tag',
+    contributions: 'Beiträgee',
+    contributionsOnDay: 'Beiträgee an diesem Tag',
     lastActive: 'Zuletzt aktiv',
     liveDemo: 'Live Demo',
     repos: 'Repos',

@@ -4,7 +4,11 @@
       "WebFetch(domain:project-manager.jannekeipert.de)",
       "Bash(bun add:*)",
       "Bash(bunx shadcn@latest:*)",
-      "Bash(bun run:*)"
+      "Bash(bun run:*)",
+      "Bash(npx tsc:*)",
+      "Bash(cat c:/Users/janne/projektejwkk-new/src/components/display/RootPage/*.tsx)",
+      "Bash(ls c:/Users/janne/projektejwkk-new/*.ts c:/Users/janne/projektejwkk-new/*.mjs c:/Users/janne/projektejwkk-new/*.js)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\(''''eslintConfig'''', {}\\), indent=2\\)\\); print\\(json.dumps\\(d.get\\(''''prettier'''', {}\\), indent=2\\)\\)\")"
     ]
   }
 }

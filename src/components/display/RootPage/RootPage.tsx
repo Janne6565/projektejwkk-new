@@ -7,7 +7,7 @@ import { ModalProvider } from '@/components/technical/modal-provider';
 const RootPage = () => {
   return (
     <ModalProvider>
-      <div className="bg-background w-screen transition-colors min-h-screen">
+      <div className="bg-background w-screen transition-colors min-h-screen pb-500">
         <FloatingHeader />
         <HeroSection />
         <ProjectsSection />

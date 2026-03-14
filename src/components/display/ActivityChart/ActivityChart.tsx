@@ -93,16 +93,11 @@ const ActivityChart = ({
 
   if (fullscreen) {
     return (
-      // Outer div: fills the container and centers the grid
       <div
         ref={containerRef}
-        className={cn(
-          'absolute inset-0 flex items-center justify-center p-4',
-          className,
-        )}
+        className={cn('absolute inset-0', className)}
       >
-        {/* Inner grid: sizes itself via --chart-cell so rows === cols (squares) */}
-        <div className="activity-chart-fullscreen grid grid-flow-col gap-1.75">
+        <div className="activity-chart-fullscreen grid grid-flow-col gap-0.75 w-full h-full">
           {allDays.map((day, i) => (
             <Tooltip key={`${day.date}-${i}`}>
               <TooltipTrigger asChild>

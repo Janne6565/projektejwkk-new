@@ -117,15 +117,8 @@
 }
 
 .activity-chart-fullscreen {
-    /* gap-0.75 = 0.1875rem ≈ 3px in Tailwind v4 */
-    --chart-gap: 0.1875rem;
-    /* 14 rows, 22 cols — pick whichever dimension gives smaller (square) cells */
-    --chart-cell: min(
-        calc((100svh - 2rem - 13 * var(--chart-gap)) / 14),
-        calc((100vw - 2rem - 21 * var(--chart-gap)) / 22)
-    );
-    grid-template-rows: repeat(14, var(--chart-cell));
-    grid-auto-columns: var(--chart-cell);
+    grid-template-rows: repeat(14, 1fr);
+    grid-template-columns: repeat(22, 1fr);
 }
 
 @layer base {
@@ -133,9 +126,10 @@
     @apply border-border outline-ring/50;
     }
   body {
-    @apply font-sans bg-background text-foreground;
+    @apply font-sans bg-background text-foreground overflow-x-hidden;
     }
   html {
     @apply font-sans;
+    scrollbar-gutter: stable;
     }
 }
