@@ -4,6 +4,8 @@ import LanguageDetector from 'i18next-browser-languagedetector'; // Optional
 
 import enCommon from './en/common.ts';
 import deCommon from './de/common.ts';
+import laCommon from './la/common.ts';
+import sgaCommon from './sga/common.ts';
 
 i18next
   .use(initReactI18next)
@@ -12,8 +14,10 @@ i18next
     resources: {
       en: { common: enCommon },
       de: { common: deCommon },
+      la: { common: laCommon },
+      sga: { common: sgaCommon },
     },
-    supportedLngs: ['en', 'de'],
+    supportedLngs: ['en', 'de', 'la', 'sga'],
     fallbackLng: 'en',
     ns: ['common'], // Default namespace
     defaultNS: 'common',

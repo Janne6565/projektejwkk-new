@@ -10,6 +10,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import ProjectContributionChart from './ProjectContributionChart';
 import AdditionalLinks from './AdditionalLinks';
+import { toSGA } from '@/lib/sga';
 
 function repoName(url: string): string {
   // Extract "user/repo" from a GitHub URL
@@ -24,6 +25,8 @@ const ProjectDetailModal = () => {
   if (state.type !== 'project') return null;
 
   const project = state.project;
+  const isSGA = i18n.language === 'sga';
+  const s = (text: string) => (isSGA ? toSGA(text) : text);
   const description =
     i18n.language === 'de' ? project.descriptionDe : project.descriptionEn;
 
@@ -31,8 +34,8 @@ const ProjectDetailModal = () => {
     <Dialog open onOpenChange={(open) => !open && close()}>
       <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{project.name}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          <DialogTitle>{s(project.name)}</DialogTitle>
+          <DialogDescription>{s(description)}</DialogDescription>
         </DialogHeader>
 
         {project.contributions.length > 0 && (
@@ -55,7 +58,7 @@ const ProjectDetailModal = () => {
               {project.repositories.map((repo) => (
                 <Badge key={repo} variant="outline" asChild>
                   <a href={`https://${repo}`} target="_blank" rel="noreferrer">
-                    {repoName(repo)}
+                    {s(repoName(repo))}
                   </a>
                 </Badge>
               ))}

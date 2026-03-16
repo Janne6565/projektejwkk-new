@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import type { ChartWeek, DayContribution } from '@/types/contribution-chart';
+import type { ChartWeek, DayCell, DayContribution } from '@/types/contribution-chart';
 import { cn } from '@/lib/utils';
 import {
   Tooltip,
@@ -19,34 +19,6 @@ const SHORT_MONTHS = [
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 ];
 
-interface MonthGroup {
-  label: string;
-  weeks: ChartWeek[];
-}
-
-/** Group weeks by month. A week belongs to the month of its Thursday (ISO convention). */
-function groupByMonth(weeks: ChartWeek[]): MonthGroup[] {
-  const groups: MonthGroup[] = [];
-  let current: MonthGroup | null = null;
-
-  for (const week of weeks) {
-    // Use Thursday of the week (index 4 = Thu when days start on Sun)
-    // or fall back to the first available day
-    const refDay = week.days.find((d) => d.dayOfWeek === 4) ?? week.days[0];
-    if (!refDay) continue;
-
-    const [y, m] = refDay.date.split('-').map(Number);
-    const label = `${SHORT_MONTHS[m - 1]} ${y}`;
-
-    if (!current || current.label !== label) {
-      current = { label, weeks: [] };
-      groups.push(current);
-    }
-    current.weeks.push(week);
-  }
-
-  return groups;
-}
 
 function intensityClass(intensity: 0 | 1 | 2 | 3 | 4): string {
   const classes: Record<number, string> = {
@@ -172,24 +144,55 @@ const ActivityChart = ({
     );
   }
 
-  const monthGroups = useMemo(() => groupByMonth(weeks), [weeks]);
+  // Split boundary weeks into per-month columns so every day appears in its own month.
+  // e.g. week Dec 29–Jan 4 becomes two columns: [Dec 29–31] and [Jan 1–4].
+  const displayWeeks = useMemo(() => {
+    const raw: { key: string; month: number; year: number; slots: (DayCell | null)[] }[] = [];
+
+    for (const week of weeks) {
+      const byMonth = new Map<string, { m: number; y: number; days: DayCell[] }>();
+      for (const day of week.days) {
+        const [y, m] = day.date.split('-').map(Number);
+        const key = `${y}-${m}`;
+        if (!byMonth.has(key)) byMonth.set(key, { m, y, days: [] });
+        byMonth.get(key)!.days.push(day);
+      }
+      const groups = Array.from(byMonth.values()).sort((a, b) =>
+        a.y !== b.y ? a.y - b.y : a.m - b.m,
+      );
+      for (const { m, y, days } of groups) {
+        const slots: (DayCell | null)[] = Array(7).fill(null);
+        for (const day of days) slots[day.dayOfWeek] = day;
+        raw.push({ key: `${week.weekIndex}-${y}-${m}`, month: m, year: y, slots });
+      }
+    }
+
+    return raw.map((w, i) => ({
+      ...w,
+      isNewMonth: i === 0 || w.month !== raw[i - 1].month || w.year !== raw[i - 1].year,
+      label: `${SHORT_MONTHS[w.month - 1]} ${w.year}`,
+    }));
+  }, [weeks]);
 
   return (
     <div className={cn('flex flex-col items-center gap-2', className)}>
       <div className="flex items-end gap-1">
         <WeekdayLabels />
-        <div ref={containerRef} className="flex gap-3">
-          {monthGroups.map((group) => {
-            const groupDays = group.weeks.flatMap((week) =>
-              week.days.map((day) => ({ ...day, week: week.weekIndex })),
-            );
-            return (
-              <div key={group.label} className="flex flex-col gap-0.75">
-                <span className="text-xs text-muted-foreground truncate">
-                  {group.label}
-                </span>
-                <div className="grid grid-rows-7 grid-flow-col gap-0.75">
-                  {groupDays.map((day) => (
+        <div ref={containerRef} className="flex gap-0.75">
+          {displayWeeks.map((week, i) => (
+            <div
+              key={week.key}
+              className={cn(
+                'flex flex-col gap-0.75',
+                week.isNewMonth && i > 0 && 'ml-2',
+              )}
+            >
+              <span className={cn('text-xs text-muted-foreground h-4 leading-4 whitespace-nowrap overflow-visible w-0', !week.isNewMonth && 'invisible')}>
+                {week.label}
+              </span>
+              <div className="grid grid-rows-7 gap-0.75">
+                {week.slots.map((day, row) =>
+                  day ? (
                     <Tooltip key={day.date}>
                       <TooltipTrigger asChild>
                         <button
@@ -223,11 +226,13 @@ const ActivityChart = ({
                         )}
                       </TooltipContent>
                     </Tooltip>
-                  ))}
-                </div>
+                  ) : (
+                    <div key={row} className="size-3 sm:size-3.5" />
+                  ),
+                )}
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </div>
       <ChartLegend />

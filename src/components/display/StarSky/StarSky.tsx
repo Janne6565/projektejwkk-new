@@ -4,6 +4,7 @@ import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import gsap from 'gsap';
 import type { StarData } from '@/hooks/use-star-contributions';
+import { toRoman, toSGA } from '@/lib/sga';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -24,14 +25,26 @@ interface StarSkyProps {
   scrollTriggerRef: React.RefObject<HTMLElement | null>;
 }
 
+const ROMAN_MONTHS = [
+  'Ianuarius', 'Februarius', 'Martius', 'Aprilis', 'Maius', 'Iunius',
+  'Iulius', 'Augustus', 'September', 'October', 'November', 'December',
+];
+
 function formatDate(dateStr: string, locale: string): string {
   const [y, m, d] = dateStr.split('-').map(Number);
+  if (locale === 'la') {
+    return `${toRoman(d)} ${ROMAN_MONTHS[m - 1]} ${toRoman(y)}`;
+  }
   const date = new Date(y, m - 1, d);
-  return date.toLocaleDateString(locale, {
+  const formatted = date.toLocaleDateString(locale === 'sga' ? 'en' : locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
+  if (locale === 'sga') {
+    return toSGA(formatted);
+  }
+  return formatted;
 }
 
 /** Pre-render star sprites at different sizes to offscreen canvases. */
@@ -347,7 +360,8 @@ const StarSky = ({
       }
 
       // Update DOM text only when values change
-      const countText = String(Math.min(visibleCount, totalContributions));
+      const rawCount = String(Math.min(visibleCount, totalContributions));
+      const countText = localeRef.current === 'sga' ? toSGA(rawCount) : rawCount;
       if (countText !== lastCountTextRef.current) {
         lastCountTextRef.current = countText;
         if (countRef.current) countRef.current.textContent = countText;

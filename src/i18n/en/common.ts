@@ -2,6 +2,8 @@ export default {
     languages: {
         de: 'Deutsch',
         en: 'English',
+        la: 'Latin',
+        sga: 'Minecraft',
         title: 'Languages',
     },
     tooltips: {

@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
+import { toSGA } from '@/lib/sga';
 
 const ProjectCard = ({
   project,
@@ -18,6 +19,8 @@ const ProjectCard = ({
   onClick: () => void;
 }) => {
   const { t, i18n } = useTranslation();
+  const isSGA = i18n.language === 'sga';
+  const s = (text: string) => (isSGA ? toSGA(text) : text);
   const description =
     i18n.language === 'de' ? project.descriptionDe : project.descriptionEn;
 
@@ -27,17 +30,17 @@ const ProjectCard = ({
       onClick={onClick}
     >
       <CardHeader>
-        <CardTitle>{project.name}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle>{s(project.name)}</CardTitle>
+        <CardDescription>{s(description)}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-2 flex-wrap">
           <Badge variant="secondary">
-            {project.contributionCount} {t('projects.contributions')}
+            {s(String(project.contributionCount))} {t('projects.contributions')}
           </Badge>
           {project.lastContributionDate && (
             <span className="text-xs text-muted-foreground">
-              {t('projects.lastActive')}: {project.lastContributionDate}
+              {t('projects.lastActive')}: {s(project.lastContributionDate)}
             </span>
           )}
         </div>
@@ -57,7 +60,7 @@ const ProjectCard = ({
         )}
         {project.repositories.length > 0 && (
           <Badge variant="outline">
-            {project.repositories.length} {t('projects.repos')}
+            {s(String(project.repositories.length))} {t('projects.repos')}
           </Badge>
         )}
       </CardFooter>

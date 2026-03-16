@@ -135,9 +135,21 @@ export function useContributionChartData(
     const anchor = customEndDate ?? new Date();
     const endDate = getWeekStart(anchor);
     endDate.setDate(endDate.getDate() + 6);
-    const startDate = subWeeks(getWeekStart(anchor), weekCount - 1);
+    const rawStart = subWeeks(getWeekStart(anchor), weekCount - 1);
+    // Snap start back to the first Sunday on or before the 1st of that month
+    // so the first month in the chart is always complete.
+    const monthFirst = new Date(rawStart.getFullYear(), rawStart.getMonth(), 1);
+    const startDate = getWeekStart(monthFirst);
 
-    const allDays = eachDayOfInterval(startDate, endDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Only include days from the intended start month onwards — the Sunday snap
+    // may pull in a few days from the previous month which we don't want to show.
+    // Also exclude future days (rest of the current week).
+    const allDays = eachDayOfInterval(startDate, endDate).filter(
+      (d) => d >= monthFirst && d <= today,
+    );
 
     const dayCells: DayCell[] = allDays.map((date) => {
       const dateStr = toDateString(date);

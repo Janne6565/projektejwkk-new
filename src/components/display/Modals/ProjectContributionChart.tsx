@@ -3,7 +3,7 @@ import type { Contribution } from '@/types/project';
 import { useContributionChartData } from '@/hooks/use-contribution-chart-data';
 import ActivityChart from '@/components/display/ActivityChart/ActivityChart';
 
-const WEEK_COUNT = 22;
+const WEEK_COUNT = 20;
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 /** Find the end-date of the WEEK_COUNT-week window that contains the most contributions. */
