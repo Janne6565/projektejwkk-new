@@ -1,11 +1,9 @@
-import ColorSchemeToggleButton from '@/components/display/FloatingHeader/HeaderButtonGroup/ColorSchemeToggleButton/ColorSchemeToggleButton.tsx';
 import LanguageSelectorButton from '@/components/display/FloatingHeader/HeaderButtonGroup/LanguageSelectorButton/LanguageSelectorButton.tsx';
 
 const HeaderButtonGroup = () => {
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-4 h-10">
       <LanguageSelectorButton />
-      <ColorSchemeToggleButton />
     </div>
   );
 };

@@ -34,13 +34,15 @@ interface UseContributionChartDataOptions {
    * Any other value uses sequential layout: days fill column-major, rowCount days per column.
    */
   rowCount?: number;
+  /** Override the end date of the chart window (defaults to today) */
+  endDate?: Date;
 }
 
 export function useContributionChartData(
   projects: Project[] | undefined,
   options: UseContributionChartDataOptions = {},
 ) {
-  const { weekCount = 22, randomize = false, rowCount = 7 } = options;
+  const { weekCount = 22, randomize = false, rowCount = 7, endDate: customEndDate } = options;
 
   return useMemo(() => {
     if (!projects || projects.length === 0) {
@@ -130,10 +132,10 @@ export function useContributionChartData(
     }
 
     // Calendar week layout (rowCount === 7): group by day-of-week within each week.
-    const today = new Date();
-    const endDate = getWeekStart(today);
+    const anchor = customEndDate ?? new Date();
+    const endDate = getWeekStart(anchor);
     endDate.setDate(endDate.getDate() + 6);
-    const startDate = subWeeks(getWeekStart(today), weekCount - 1);
+    const startDate = subWeeks(getWeekStart(anchor), weekCount - 1);
 
     const allDays = eachDayOfInterval(startDate, endDate);
 
@@ -187,5 +189,5 @@ export function useContributionChartData(
       }));
 
     return { weeks, maxContributions, isReady: true };
-  }, [projects, weekCount, randomize, rowCount]);
+  }, [projects, weekCount, randomize, rowCount, customEndDate]);
 }

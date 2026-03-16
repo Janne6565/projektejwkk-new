@@ -1,66 +1,59 @@
-import { useRef } from 'react';
-import { ChevronDown } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import ActivityChart from '@/components/display/ActivityChart/ActivityChart';
-import { useModal } from '@/components/technical/modal-provider';
-import { useContributionChartData } from '@/hooks/use-contribution-chart-data';
+import {useRef} from 'react';
+import {ChevronDown} from 'lucide-react';
+import {useTranslation} from 'react-i18next';
+import StarSky from '@/components/display/StarSky/StarSky';
+import {useStarContributions} from '@/hooks/use-star-contributions';
 import useProjects from '@/hooks/use-projects';
 
-const HERO_ROW_COUNT = 14;
-const HERO_COL_COUNT = 22;
-
-const SKELETON_KEYS = Array.from(
-  { length: HERO_ROW_COUNT * HERO_COL_COUNT },
-  (_, i) => `skeleton-${i}`,
-);
-
-const ChartLoadingSkeleton = () => (
-  <div className="absolute inset-0 flex items-center justify-center p-4">
-    <div className="activity-chart-fullscreen grid grid-flow-col gap-1.75 opacity-30">
-      {SKELETON_KEYS.map((key) => (
-        <div key={key} className="rounded-sm bg-muted animate-pulse" />
-      ))}
-    </div>
-  </div>
-);
-
 const HeroSection = () => {
-  const { projects, isLoading } = useProjects();
-  const { weeks, maxContributions, isReady } = useContributionChartData(
-    projects,
-    { randomize: true, rowCount: HERO_ROW_COUNT, weekCount: HERO_COL_COUNT },
-  );
-  const { openDayModal } = useModal();
-  const { t } = useTranslation();
-  const sectionRef = useRef<HTMLElement>(null);
+    const {projects, isLoading} = useProjects();
+    const {stars, uniqueDates, earliestDate, totalContributions, isReady} =
+        useStarContributions(projects);
+    const {t} = useTranslation();
+    const sectionRef = useRef<HTMLElement>(null);
 
-  return (
-    <section
-      ref={sectionRef}
-      className="h-screen flex flex-col items-center justify-center relative overflow-hidden"
-    >
-      {isLoading || !isReady ? (
-        <ChartLoadingSkeleton />
-      ) : (
-        <ActivityChart
-          weeks={weeks}
-          maxContributions={maxContributions}
-          onDayClick={openDayModal}
-          animated
-          fullscreen
-          scrollTriggerRef={sectionRef}
-        />
-      )}
+    return (
+        <section
+            ref={sectionRef}
+            className="h-screen flex flex-col items-center justify-center relative overflow-hidden bg-background"
+        >
+            {!isLoading && isReady && (
+                <StarSky
+                    stars={stars}
+                    uniqueDates={uniqueDates}
+                    earliestDate={earliestDate}
+                    totalContributions={totalContributions}
+                    scrollTriggerRef={sectionRef}
+                />
+            )}
 
-      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center z-10 pointer-events-none drop-shadow-lg">
-        {t('projects.heroTitle')}
-      </h1>
+            <div className={"max-w-[80vw] md:max-w-[unset] mb-[3vw]"}>
+                <h2 className={'text-2xl opacity-90 font-bold text-center mb-2 '}>
+                    {t('projects.heroSubtitle')}
+                </h2>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center z-10 drop-shadow-lg">
+                    {t('projects.heroTitle')}
+                </h1>
+            </div>
 
-      <div className="absolute bottom-8 animate-bounce z-10">
-        <ChevronDown className="size-8 text-muted-foreground" />
-      </div>
-    </section>
-  );
+            <button
+                type="button"
+                className="absolute bottom-8 animate-bounce z-10 cursor-pointer"
+                onClick={() => {
+                    // The hero is pinned for 300vh by ScrollTrigger.
+                    // Scroll past the full pinned region to land on the next section.
+                    window.scrollTo({
+                        top: window.innerHeight * 4,
+                        behavior: 'smooth',
+                    });
+                }}
+                aria-label="Scroll to projects"
+            >
+                <ChevronDown className="size-8 text-muted-foreground -mb-6"/>
+                <ChevronDown className="size-8 text-muted-foreground"/>
+            </button>
+        </section>
+    );
 };
 
 export default HeroSection;

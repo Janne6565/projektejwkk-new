@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -13,6 +13,40 @@ import ChartLegend from './ChartLegend';
 import WeekdayLabels from './WeekdayLabels';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const SHORT_MONTHS = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+interface MonthGroup {
+  label: string;
+  weeks: ChartWeek[];
+}
+
+/** Group weeks by month. A week belongs to the month of its Thursday (ISO convention). */
+function groupByMonth(weeks: ChartWeek[]): MonthGroup[] {
+  const groups: MonthGroup[] = [];
+  let current: MonthGroup | null = null;
+
+  for (const week of weeks) {
+    // Use Thursday of the week (index 4 = Thu when days start on Sun)
+    // or fall back to the first available day
+    const refDay = week.days.find((d) => d.dayOfWeek === 4) ?? week.days[0];
+    if (!refDay) continue;
+
+    const [y, m] = refDay.date.split('-').map(Number);
+    const label = `${SHORT_MONTHS[m - 1]} ${y}`;
+
+    if (!current || current.label !== label) {
+      current = { label, weeks: [] };
+      groups.push(current);
+    }
+    current.weeks.push(week);
+  }
+
+  return groups;
+}
 
 function intensityClass(intensity: 0 | 1 | 2 | 3 | 4): string {
   const classes: Record<number, string> = {
@@ -138,49 +172,62 @@ const ActivityChart = ({
     );
   }
 
+  const monthGroups = useMemo(() => groupByMonth(weeks), [weeks]);
+
   return (
     <div className={cn('flex flex-col items-center gap-2', className)}>
-      <div className="flex gap-1">
+      <div className="flex items-end gap-1">
         <WeekdayLabels />
-        <div
-          ref={containerRef}
-          className="grid grid-rows-7 grid-flow-col gap-0.75"
-        >
-          {allDays.map((day) => (
-            <Tooltip key={day.date}>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  className={cn(
-                    'chart-cell size-3 sm:size-3.5 rounded-sm cursor-pointer transition-colors hover:ring-1 hover:ring-foreground/30',
-                    intensityClass(day.intensity),
-                  )}
-                  onClick={() => {
-                    if (day.contributions.length > 0) {
-                      onDayClick(day.date, day.contributions);
-                    }
-                  }}
-                  aria-label={`${day.date}: ${day.contributions.length} contributions`}
-                />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="font-medium">{day.date}</p>
-                <p>
-                  {day.contributions.length}{' '}
-                  {day.contributions.length === 1
-                    ? 'contribution'
-                    : 'contributions'}
-                </p>
-                {day.contributions.length > 0 && (
-                  <ul className="mt-1">
-                    {uniqueProjects(day.contributions).map((name) => (
-                      <li key={name}>{name}</li>
-                    ))}
-                  </ul>
-                )}
-              </TooltipContent>
-            </Tooltip>
-          ))}
+        <div ref={containerRef} className="flex gap-3">
+          {monthGroups.map((group) => {
+            const groupDays = group.weeks.flatMap((week) =>
+              week.days.map((day) => ({ ...day, week: week.weekIndex })),
+            );
+            return (
+              <div key={group.label} className="flex flex-col gap-0.75">
+                <span className="text-xs text-muted-foreground truncate">
+                  {group.label}
+                </span>
+                <div className="grid grid-rows-7 grid-flow-col gap-0.75">
+                  {groupDays.map((day) => (
+                    <Tooltip key={day.date}>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          className={cn(
+                            'chart-cell size-3 sm:size-3.5 rounded-sm cursor-pointer transition-colors hover:ring-1 hover:ring-foreground/30',
+                            intensityClass(day.intensity),
+                          )}
+                          onClick={() => {
+                            if (day.contributions.length > 0) {
+                              onDayClick(day.date, day.contributions);
+                            }
+                          }}
+                          aria-label={`${day.date}: ${day.contributions.length} contributions`}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="font-medium">{day.date}</p>
+                        <p>
+                          {day.contributions.length}{' '}
+                          {day.contributions.length === 1
+                            ? 'contribution'
+                            : 'contributions'}
+                        </p>
+                        {day.contributions.length > 0 && (
+                          <ul className="mt-1">
+                            {uniqueProjects(day.contributions).map((name) => (
+                              <li key={name}>{name}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </TooltipContent>
+                    </Tooltip>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
       <ChartLegend />

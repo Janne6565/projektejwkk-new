@@ -1,37 +1,39 @@
 export default {
-  languages: {
-    de: 'Deutsch',
-    en: 'English',
-    title: 'Languages',
-  },
-  tooltips: {
-    logo: 'Welcome to my projects :)',
-    colorScheme: {
-      toggle: 'Change colorscheme',
+    languages: {
+        de: 'Deutsch',
+        en: 'English',
+        title: 'Languages',
     },
-    languageSelector: 'Change language',
-  },
-  projects: {
-    heroTitle: 'The Projects of Janne Keipert',
-    gridTitle: 'Projects',
-    contributions: 'contributions',
-    contributionsOnDay: 'contributions on this day',
-    lastActive: 'Last active',
-    liveDemo: 'Live Demo',
-    repos: 'repos',
-    repositories: 'Repositories',
-    appStore: 'App Store',
-    playStore: 'Play Store',
-    visitLink: 'Visit',
-    noProjects: 'No projects found',
-    loading: 'Loading projects...',
-    chart: {
-      less: 'Less',
-      more: 'More',
+    tooltips: {
+        logo: 'Welcome to my projects :)',
+        colorScheme: {
+            toggle: 'Change colorscheme',
+        },
+        languageSelector: 'Change language',
     },
-    detail: {
-      contributionHistory: 'Contribution History',
-      additionalLinks: 'Links',
+    projects: {
+        heroSubtitle: 'The babblings of',
+        heroTitle: 'Janne Keipert',
+        gridTitle: 'Projects',
+        contributions: 'contributions',
+        contributionsSince: 'contributions since',
+        contributionsOnDay: 'contributions on this day',
+        lastActive: 'Last active',
+        liveDemo: 'Live Demo',
+        repos: 'repos',
+        repositories: 'Repositories',
+        appStore: 'App Store',
+        playStore: 'Play Store',
+        visitLink: 'Visit',
+        noProjects: 'No projects found',
+        loading: 'Loading projects...',
+        chart: {
+            less: 'Less',
+            more: 'More',
+        },
+        detail: {
+            contributionHistory: 'Contribution History',
+            additionalLinks: 'Links',
+        },
     },
-  },
 } as const;
