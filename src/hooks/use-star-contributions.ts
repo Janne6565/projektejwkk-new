@@ -1,9 +1,7 @@
 import { useMemo } from 'react';
-import type { Project } from '@/types/project';
 
 export interface StarData {
   date: string;
-  projectName: string;
   x: number;
   y: number;
   /** Base radius factor 0.3–1.0, scaled by contribution count for that day */
@@ -22,9 +20,9 @@ function seededRandom(seed: number) {
   };
 }
 
-export function useStarContributions(projects: Project[] | undefined) {
+export function useStarContributions(calendar: Record<string, number> | undefined) {
   return useMemo(() => {
-    if (!projects || projects.length === 0) {
+    if (!calendar || Object.keys(calendar).length === 0) {
       return {
         stars: [] as StarData[],
         uniqueDates: [] as string[],
@@ -35,14 +33,10 @@ export function useStarContributions(projects: Project[] | undefined) {
       };
     }
 
-    // Build flat entries with project name, sorted by date
-    const entries: { date: string; projectName: string }[] = [];
-    for (const project of projects) {
-      for (const c of project.contributions) {
-        entries.push({ date: c.day, projectName: project.name });
-      }
-    }
-    entries.sort((a, b) => a.date.localeCompare(b.date));
+    // Filter to days with contributions and sort by date
+    const entries = Object.entries(calendar)
+      .filter(([, count]) => count > 0)
+      .sort(([a], [b]) => a.localeCompare(b));
 
     if (entries.length === 0) {
       return {
@@ -55,31 +49,23 @@ export function useStarContributions(projects: Project[] | undefined) {
       };
     }
 
-    // Count per day (needed for size calculation)
-    const countByDay = new Map<string, number>();
-    for (const e of entries) {
-      countByDay.set(e.date, (countByDay.get(e.date) ?? 0) + 1);
-    }
-
-    const sortedDays = Array.from(countByDay.keys()).sort();
-    const maxCount = Math.max(...countByDay.values());
+    const maxCount = Math.max(...entries.map(([, c]) => c));
     const rand = seededRandom(42);
-    const uniqueDates = sortedDays;
+    const uniqueDates = entries.map(([date]) => date);
 
-    // Build flat star list: one star per entry, sorted by date
+    // Create one star per contribution (expand count into individual stars)
     const stars: StarData[] = [];
-
-    for (const entry of entries) {
-      const count = countByDay.get(entry.date)!;
-      stars.push({
-        date: entry.date,
-        projectName: entry.projectName,
-        x: rand(),
-        y: rand(),
-        size: 0.3 + (count / maxCount) * 0.7,
-        threshold: 0, // filled below
-        phase: rand() * Math.PI * 2,
-      });
+    for (const [date, count] of entries) {
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          date,
+          x: rand(),
+          y: rand(),
+          size: 0.3 + (count / maxCount) * 0.7,
+          threshold: 0,
+          phase: rand() * Math.PI * 2,
+        });
+      }
     }
 
     // Assign thresholds: each star's position in the timeline 0–1
@@ -96,5 +82,5 @@ export function useStarContributions(projects: Project[] | undefined) {
       totalContributions: total,
       isReady: true,
     };
-  }, [projects]);
+  }, [calendar]);
 }

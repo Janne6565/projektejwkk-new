@@ -42,6 +42,11 @@ export default {
         detail: {
             contributionHistory: 'Beitragsverlauf',
             additionalLinks: 'Links',
+            commits: 'Commits',
+            prs: 'PRs',
+            issues: 'Issues',
+            reviews: 'Reviews',
+            total: 'Gesamt',
         },
     },
 } satisfies TranslationShape<typeof enCommon>;

@@ -128,7 +128,7 @@ const StarSky = ({
       ScrollTrigger.create({
         trigger: scrollTriggerRef.current,
         start: 'top top',
-        end: '+=300%',
+        end: '+=200%',
         pin: true,
         onUpdate: (self) => {
           progressRef.current = self.progress;
@@ -275,7 +275,7 @@ const StarSky = ({
 
       // Scale progress so stars finish revealing at ~90% scroll,
       // leaving the last 10% as an empty buffer before unpin.
-      const progress = Math.min(smoothRef.current / 0.8, 1);
+      const progress = Math.min(smoothRef.current / 0.9, 1);
       const w = canvas.width / (window.devicePixelRatio || 1);
       const h = canvas.height / (window.devicePixelRatio || 1);
 
@@ -349,7 +349,7 @@ const StarSky = ({
       const tooltip = tooltipRef.current;
       if (tooltip) {
         if (nearestStar) {
-          const label = `${nearestStar.projectName} — ${formatDate(nearestStar.date, localeRef.current)}`;
+          const label = formatDate(nearestStar.date, localeRef.current);
           tooltip.textContent = label;
           tooltip.style.opacity = '1';
           tooltip.style.left = `${nearestScreenX}px`;

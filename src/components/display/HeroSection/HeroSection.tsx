@@ -6,9 +6,9 @@ import {useStarContributions} from '@/hooks/use-star-contributions';
 import useProjects from '@/hooks/use-projects';
 
 const HeroSection = () => {
-    const {projects, isLoading} = useProjects();
+    const {calendar, isLoading} = useProjects();
     const {stars, uniqueDates, earliestDate, totalContributions, isReady} =
-        useStarContributions(projects);
+        useStarContributions(calendar);
     const {t} = useTranslation();
     const sectionRef = useRef<HTMLElement>(null);
 

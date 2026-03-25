@@ -1,17 +1,16 @@
 import { useState } from 'react';
-import type { DayContribution } from '@/types/contribution-chart';
 import type { Project } from '@/types/project';
 
 export type ModalState =
   | { type: 'none' }
-  | { type: 'day'; date: string; contributions: DayContribution[] }
+  | { type: 'day'; date: string; count: number }
   | { type: 'project'; project: Project };
 
 export function useProjectModal() {
   const [state, setState] = useState<ModalState>({ type: 'none' });
 
-  const openDayModal = (date: string, contributions: DayContribution[]) => {
-    setState({ type: 'day', date, contributions });
+  const openDayModal = (date: string, count: number) => {
+    setState({ type: 'day', date, count });
   };
 
   const openProjectModal = (project: Project) => {

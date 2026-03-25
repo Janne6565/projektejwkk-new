@@ -36,6 +36,11 @@ export default {
         detail: {
             contributionHistory: 'Contribution History',
             additionalLinks: 'Links',
+            commits: 'commits',
+            prs: 'PRs',
+            issues: 'issues',
+            reviews: 'reviews',
+            total: 'total',
         },
     },
 } as const;

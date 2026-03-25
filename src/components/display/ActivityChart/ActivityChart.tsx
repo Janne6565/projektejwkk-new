@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import type { ChartWeek, DayCell, DayContribution } from '@/types/contribution-chart';
+import type { ChartWeek, DayCell } from '@/types/contribution-chart';
 import { cn } from '@/lib/utils';
 import {
   Tooltip,
@@ -31,14 +31,10 @@ function intensityClass(intensity: 0 | 1 | 2 | 3 | 4): string {
   return classes[intensity];
 }
 
-function uniqueProjects(contributions: DayContribution[]): string[] {
-  return [...new Set(contributions.map((c) => c.projectName))];
-}
-
 interface ActivityChartProps {
   weeks: ChartWeek[];
   maxContributions: number;
-  onDayClick: (date: string, contributions: DayContribution[]) => void;
+  onDayClick: (date: string, count: number) => void;
   className?: string;
   animated?: boolean;
   /** Fullscreen mode: no labels/legend, cells fill the container */
@@ -76,7 +72,6 @@ const ActivityChart = ({
         },
       });
 
-      // Animate cells in over the first ~75% of scroll
       tl.to(cells, {
         opacity: 1,
         scale: 1,
@@ -87,7 +82,6 @@ const ActivityChart = ({
         },
       });
 
-      // Hold for the remaining ~25% so the user can see the finished chart before unpinning
       tl.to({}, { duration: 0.5 });
     },
     { scope: containerRef, dependencies: [animated, weeks] },
@@ -114,28 +108,19 @@ const ActivityChart = ({
                     intensityClass(day.intensity),
                   )}
                   onClick={() => {
-                    if (day.contributions.length > 0) {
-                      onDayClick(day.date, day.contributions);
+                    if (day.count > 0) {
+                      onDayClick(day.date, day.count);
                     }
                   }}
-                  aria-label={`${day.date}: ${day.contributions.length} contributions`}
+                  aria-label={`${day.date}: ${day.count} contributions`}
                 />
               </TooltipTrigger>
               <TooltipContent>
                 <p className="font-medium">{day.date}</p>
                 <p>
-                  {day.contributions.length}{' '}
-                  {day.contributions.length === 1
-                    ? 'contribution'
-                    : 'contributions'}
+                  {day.count}{' '}
+                  {day.count === 1 ? 'contribution' : 'contributions'}
                 </p>
-                {day.contributions.length > 0 && (
-                  <ul className="mt-1">
-                    {uniqueProjects(day.contributions).map((name) => (
-                      <li key={name}>{name}</li>
-                    ))}
-                  </ul>
-                )}
               </TooltipContent>
             </Tooltip>
           ))}
@@ -144,8 +129,7 @@ const ActivityChart = ({
     );
   }
 
-  // Split boundary weeks into per-month columns so every day appears in its own month.
-  // e.g. week Dec 29–Jan 4 becomes two columns: [Dec 29–31] and [Jan 1–4].
+  // Split boundary weeks into per-month columns
   const displayWeeks = useMemo(() => {
     const raw: { key: string; month: number; year: number; slots: (DayCell | null)[] }[] = [];
 
@@ -202,28 +186,21 @@ const ActivityChart = ({
                             intensityClass(day.intensity),
                           )}
                           onClick={() => {
-                            if (day.contributions.length > 0) {
-                              onDayClick(day.date, day.contributions);
+                            if (day.count > 0) {
+                              onDayClick(day.date, day.count);
                             }
                           }}
-                          aria-label={`${day.date}: ${day.contributions.length} contributions`}
+                          aria-label={`${day.date}: ${day.count} contributions`}
                         />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p className="font-medium">{day.date}</p>
                         <p>
-                          {day.contributions.length}{' '}
-                          {day.contributions.length === 1
+                          {day.count}{' '}
+                          {day.count === 1
                             ? 'contribution'
                             : 'contributions'}
                         </p>
-                        {day.contributions.length > 0 && (
-                          <ul className="mt-1">
-                            {uniqueProjects(day.contributions).map((name) => (
-                              <li key={name}>{name}</li>
-                            ))}
-                          </ul>
-                        )}
                       </TooltipContent>
                     </Tooltip>
                   ) : (

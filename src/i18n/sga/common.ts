@@ -43,6 +43,11 @@ export default {
         detail: {
             contributionHistory: toSGA('Contribution History'),
             additionalLinks: toSGA('Links'),
+            commits: toSGA('commits'),
+            prs: toSGA('PRs'),
+            issues: toSGA('issues'),
+            reviews: toSGA('reviews'),
+            total: toSGA('total'),
         },
     },
 } satisfies TranslationShape<typeof enCommon>;

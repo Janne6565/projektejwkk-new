@@ -1,30 +1,40 @@
-export interface Contribution {
-  day: string; // "YYYY-MM-DD"
-  type: 'COMMIT' | 'PULL_REQUEST' | 'ISSUE';
-  repositoryUrl: string;
-  reference: string;
+export interface RepositoryContribution {
+    url: string;
+    name: string;
+    commits: number;
+    pullRequests: number;
+    issues: number;
+    reviews: number;
 }
 
 export interface AdditionalInformation {
-  link?: string;
-  appstore?: string;
-  playstore?: string;
+    link?: string;
+    appstore?: string;
+    playstore?: string;
 }
 
 export interface ApiProject {
-  uuid: string;
-  index: number;
-  name: string;
-  descriptionEn: string;
-  descriptionDe: string;
-  description: string | null;
-  isVisible: boolean;
-  repositories: string[];
-  additionalInformation: AdditionalInformation;
-  contributions: Contribution[];
+    uuid: string;
+    index: number;
+    name: string;
+    descriptionEn: string;
+    descriptionDe: string;
+    description: string | null;
+    isVisible: boolean;
+    repositories: string[];
+    additionalInformation: AdditionalInformation;
+    contributions: RepositoryContribution[];
 }
 
 export interface Project extends ApiProject {
-  contributionCount: number;
-  lastContributionDate: string | null;
+    contributionCount: number;
+    encodedRepositories: string[];
+}
+
+export function totalContributions(repo: RepositoryContribution): number {
+    return repo.commits + repo.pullRequests + repo.issues + repo.reviews;
+}
+
+export function totalContributionsForList(repos: RepositoryContribution[]): number {
+    return repos.reduce((sum, r) => sum + totalContributions(r), 0);
 }

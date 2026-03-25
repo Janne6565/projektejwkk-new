@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { eachDayOfInterval, getWeekStart, subWeeks, toDateString } from '@/lib/date-utils';
-import type { ChartWeek, DayCell, DayContribution } from '@/types/contribution-chart';
-import type { Project } from '@/types/project';
+import type { ChartWeek, DayCell } from '@/types/contribution-chart';
 
 function getIntensity(
   count: number,
@@ -9,8 +8,6 @@ function getIntensity(
 ): 0 | 1 | 2 | 3 | 4 {
   if (count === 0) return 0;
   if (max <= 1) return 4;
-  // Logarithmic encoding: spreads low counts (1-3) across visible levels
-  // instead of compressing them all into level 1 like linear quartiles would.
   const ratio = Math.log(count + 1) / Math.log(max + 1);
   return Math.min(4, Math.floor(ratio * 4) + 1) as 0 | 1 | 2 | 3 | 4;
 }
@@ -39,41 +36,21 @@ interface UseContributionChartDataOptions {
 }
 
 export function useContributionChartData(
-  projects: Project[] | undefined,
+  calendar: Record<string, number> | undefined,
   options: UseContributionChartDataOptions = {},
 ) {
   const { weekCount = 22, randomize = false, rowCount = 7, endDate: customEndDate } = options;
 
   return useMemo(() => {
-    if (!projects || projects.length === 0) {
+    if (!calendar || Object.keys(calendar).length === 0) {
       return { weeks: [], maxContributions: 0, isReady: false };
     }
 
-    // Collect all contributions with project info, grouped by day
-    const contributionsByDay = new Map<string, DayContribution[]>();
-    for (const project of projects) {
-      for (const c of project.contributions) {
-        const existing = contributionsByDay.get(c.day) ?? [];
-        existing.push({
-          projectName: project.name,
-          projectUuid: project.uuid,
-          type: c.type,
-          reference: c.reference,
-          repositoryUrl: c.repositoryUrl,
-        });
-        contributionsByDay.set(c.day, existing);
-      }
-    }
-
     // Get only days that have contributions (for random selection)
-    const contributedDays = Array.from(contributionsByDay.entries()).filter(
-      ([, contribs]) => contribs.length > 0,
-    );
-
+    const contributedDays = Object.entries(calendar).filter(([, count]) => count > 0);
     const rand = seededRandom(42);
 
     // Sequential layout: rowCount days per column, column-major ordering.
-    // Used when rowCount !== 7 (non-calendar grid).
     if (rowCount !== 7) {
       const totalDays = rowCount * weekCount;
       const today = new Date();
@@ -84,34 +61,31 @@ export function useContributionChartData(
         date.setDate(today.getDate() - (totalDays - 1 - i));
         const dateStr = toDateString(date);
 
-        let contributions: DayContribution[];
+        let count: number;
         let cellDate: string;
 
         if (randomize && contributedDays.length > 0) {
           const idx = Math.floor(rand() * contributedDays.length);
-          const [randomDay, randomContribs] = contributedDays[idx];
-          contributions = randomContribs;
+          const [randomDay, randomCount] = contributedDays[idx];
+          count = randomCount;
           cellDate = randomDay;
         } else {
-          contributions = contributionsByDay.get(dateStr) ?? [];
+          count = calendar[dateStr] ?? 0;
           cellDate = dateStr;
         }
 
         return {
           date: cellDate,
-          dayOfWeek: i % rowCount, // repurposed as rowIndex for sequential layout
-          weekIndex: Math.floor(i / rowCount), // colIndex
-          contributions,
+          dayOfWeek: i % rowCount,
+          weekIndex: Math.floor(i / rowCount),
+          count,
           intensity: 0 as const,
         };
       });
 
-      const maxContributions = Math.max(
-        ...dayCells.map((d) => d.contributions.length),
-        1,
-      );
+      const maxContributions = Math.max(...dayCells.map((d) => d.count), 1);
       for (const cell of dayCells) {
-        cell.intensity = getIntensity(cell.contributions.length, maxContributions);
+        cell.intensity = getIntensity(cell.count, maxContributions);
       }
 
       const colMap = new Map<number, DayCell[]>();
@@ -131,22 +105,17 @@ export function useContributionChartData(
       return { weeks, maxContributions, isReady: true };
     }
 
-    // Calendar week layout (rowCount === 7): group by day-of-week within each week.
+    // Calendar week layout (rowCount === 7)
     const anchor = customEndDate ?? new Date();
     const endDate = getWeekStart(anchor);
     endDate.setDate(endDate.getDate() + 6);
     const rawStart = subWeeks(getWeekStart(anchor), weekCount - 1);
-    // Snap start back to the first Sunday on or before the 1st of that month
-    // so the first month in the chart is always complete.
     const monthFirst = new Date(rawStart.getFullYear(), rawStart.getMonth(), 1);
     const startDate = getWeekStart(monthFirst);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Only include days from the intended start month onwards — the Sunday snap
-    // may pull in a few days from the previous month which we don't want to show.
-    // Also exclude future days (rest of the current week).
     const allDays = eachDayOfInterval(startDate, endDate).filter(
       (d) => d >= monthFirst && d <= today,
     );
@@ -154,16 +123,16 @@ export function useContributionChartData(
     const dayCells: DayCell[] = allDays.map((date) => {
       const dateStr = toDateString(date);
 
-      let contributions: DayContribution[];
+      let count: number;
       let cellDate: string;
 
       if (randomize && contributedDays.length > 0) {
         const idx = Math.floor(rand() * contributedDays.length);
-        const [randomDay, randomContribs] = contributedDays[idx];
-        contributions = randomContribs;
+        const [randomDay, randomCount] = contributedDays[idx];
+        count = randomCount;
         cellDate = randomDay;
       } else {
-        contributions = contributionsByDay.get(dateStr) ?? [];
+        count = calendar[dateStr] ?? 0;
         cellDate = dateStr;
       }
 
@@ -173,17 +142,14 @@ export function useContributionChartData(
         weekIndex: Math.floor(
           (date.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000),
         ),
-        contributions,
+        count,
         intensity: 0 as const,
       };
     });
 
-    const maxContributions = Math.max(
-      ...dayCells.map((d) => d.contributions.length),
-      1,
-    );
+    const maxContributions = Math.max(...dayCells.map((d) => d.count), 1);
     for (const cell of dayCells) {
-      cell.intensity = getIntensity(cell.contributions.length, maxContributions);
+      cell.intensity = getIntensity(cell.count, maxContributions);
     }
 
     const weeksMap = new Map<number, DayCell[]>();
@@ -201,5 +167,5 @@ export function useContributionChartData(
       }));
 
     return { weeks, maxContributions, isReady: true };
-  }, [projects, weekCount, randomize, rowCount, customEndDate]);
+  }, [calendar, weekCount, randomize, rowCount, customEndDate]);
 }

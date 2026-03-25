@@ -42,6 +42,11 @@ export default {
         detail: {
             contributionHistory: 'Historia Contributionum',
             additionalLinks: 'Nexus',
+            commits: 'commits',
+            prs: 'PRs',
+            issues: 'quaestiones',
+            reviews: 'recensiones',
+            total: 'summa',
         },
     },
 } satisfies TranslationShape<typeof enCommon>;
