@@ -11,6 +11,8 @@ import {Badge} from '@/components/ui/badge';
 import AdditionalLinks from './AdditionalLinks';
 import {toSGA} from '@/lib/sga';
 import {totalContributions} from '@/types/project';
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion.tsx";
+import AutoHeightAccordionContent from "@/components/ui/auto-height-accordion-content.tsx";
 
 function repoName(url: string): string {
     const match = url.match(/github\.com\/(.+)/);
@@ -38,50 +40,54 @@ const ProjectDetailModal = () => {
                 </DialogHeader>
 
                 {project.contributions.length > 0 && (
-                    <div>
-                        <h4 className="font-medium mb-2">
-                            {t('projects.repositories')}
-                        </h4>
-                        <div className="space-y-2">
-                            {project.contributions.map((repo) => (
-                                <div key={repo.url} className="flex items-center justify-between gap-2 text-sm">
-                                    <a
-                                        href={repo.url}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="underline underline-offset-2 hover:text-foreground truncate"
-                                    >
-                                        {s(repoName(repo.url))}
-                                    </a>
-                                    <div className="flex gap-1.5 shrink-0">
-                                        {repo.commits > 0 && (
-                                            <Badge variant="outline" className="text-xs">
-                                                {repo.commits} {t('projects.detail.commits')}
+                    <Accordion type={"single"} collapsible>
+                        <AccordionItem value={"repositories"}>
+                            <AccordionTrigger>
+                                <h4 className="font-medium">
+                                    {t('projects.repositories')}
+                                </h4>
+                            </AccordionTrigger>
+                            <AutoHeightAccordionContent className={"pb-5 px-6"} innerClassName={"flex gap-3 flex-col"}>
+                                {project.contributions.map((repo) => (
+                                    <div key={repo.url} className="flex items-center justify-between gap-4 text-sm">
+                                        <a
+                                            href={repo.url}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="text-muted-foreground hover:text-foreground truncate"
+                                        >
+                                            {s(repoName(repo.url))}
+                                        </a>
+                                        <div className="flex gap-1.5 shrink-0">
+                                            {repo.commits > 0 && (
+                                                <Badge variant="outline" className="text-xs">
+                                                    {repo.commits} {t('projects.detail.commits')}
+                                                </Badge>
+                                            )}
+                                            {repo.pullRequests > 0 && (
+                                                <Badge variant="outline" className="text-xs">
+                                                    {repo.pullRequests} {t('projects.detail.prs')}
+                                                </Badge>
+                                            )}
+                                            {repo.issues > 0 && (
+                                                <Badge variant="outline" className="text-xs">
+                                                    {repo.issues} {t('projects.detail.issues')}
+                                                </Badge>
+                                            )}
+                                            {repo.reviews > 0 && (
+                                                <Badge variant="outline" className="text-xs">
+                                                    {repo.reviews} {t('projects.detail.reviews')}
+                                                </Badge>
+                                            )}
+                                            <Badge variant="secondary" className="text-xs">
+                                                {totalContributions(repo)} {t('projects.detail.total')}
                                             </Badge>
-                                        )}
-                                        {repo.pullRequests > 0 && (
-                                            <Badge variant="outline" className="text-xs">
-                                                {repo.pullRequests} {t('projects.detail.prs')}
-                                            </Badge>
-                                        )}
-                                        {repo.issues > 0 && (
-                                            <Badge variant="outline" className="text-xs">
-                                                {repo.issues} {t('projects.detail.issues')}
-                                            </Badge>
-                                        )}
-                                        {repo.reviews > 0 && (
-                                            <Badge variant="outline" className="text-xs">
-                                                {repo.reviews} {t('projects.detail.reviews')}
-                                            </Badge>
-                                        )}
-                                        <Badge variant="secondary" className="text-xs">
-                                            {totalContributions(repo)} {t('projects.detail.total')}
-                                        </Badge>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                                ))}
+                            </AutoHeightAccordionContent>
+                        </AccordionItem>
+                    </Accordion>
                 )}
 
                 <AdditionalLinks info={project.additionalInformation}/>
