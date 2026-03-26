@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: portfolio-ui
-          image: ghcr.io/janne6565/projektejwkk-new:sha-58cc3c6
+          image: ghcr.io/janne6565/projektejwkk-new:sha-ef28f63
           ports:
             - containerPort: 80
           livenessProbe:
