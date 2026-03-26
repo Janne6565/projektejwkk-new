@@ -26,29 +26,29 @@ const ProjectCard = ({
                 <CardTitle className={"truncate"}>{s(project.name)}</CardTitle>
                 <CardDescription className={"truncate line-clamp-6 text-wrap"}>{s(description)}</CardDescription>
             </CardHeader>
-            <CardFooter className="flex gap-2 flex-wrap">
-                <div className="flex items-center gap-2 flex-wrap">
+            <CardFooter className="flex gap-2">
+                <div className="flex items-center gap-2 w-full overflow-x-auto">
                     <Badge variant="secondary">
                         {s(String(project.contributionCount))} {t('projects.contributions')}
                     </Badge>
+                    {project.additionalInformation.link && (
+                        <Badge variant="outline" asChild>
+                            <a
+                                href={project.additionalInformation.link}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                {t('projects.liveDemo')}
+                            </a>
+                        </Badge>
+                    )}
+                    {project.repositories.length > 0 && (
+                        <Badge variant="outline" className={"inline"}>
+                            {s(String(project.encodedRepositories.length))} {t('projects.repos')}
+                        </Badge>
+                    )}
                 </div>
-                {project.additionalInformation.link && (
-                    <Badge variant="outline" asChild>
-                        <a
-                            href={project.additionalInformation.link}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            {t('projects.liveDemo')}
-                        </a>
-                    </Badge>
-                )}
-                {project.repositories.length > 0 && (
-                    <Badge variant="outline" className={"inline"}>
-                        {s(String(project.encodedRepositories.length))} {t('projects.repos')}
-                    </Badge>
-                )}
             </CardFooter>
         </Card>
     );
