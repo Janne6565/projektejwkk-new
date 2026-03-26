@@ -12,6 +12,7 @@ export interface AdditionalInformation {
     appstore?: string;
     playstore?: string;
     images?: string;
+    technologies?: string;
 }
 
 export interface ApiProject {

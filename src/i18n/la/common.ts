@@ -30,6 +30,7 @@ export default {
         liveDemo: 'Demonstratio Viva',
         repos: 'repositoria',
         repositories: 'Repositoria',
+        technologies: 'Technologiae',
         appStore: 'App Store',
         playStore: 'Play Store',
         visitLink: 'Visita',

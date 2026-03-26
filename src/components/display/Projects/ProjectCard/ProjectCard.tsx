@@ -23,8 +23,8 @@ const ProjectCard = ({
             onClick={onClick}
         >
             <CardHeader>
-                <CardTitle>{s(project.name)}</CardTitle>
-                <CardDescription>{s(description)}</CardDescription>
+                <CardTitle className={"truncate"}>{s(project.name)}</CardTitle>
+                <CardDescription className={"truncate line-clamp-6 text-wrap"}>{s(description)}</CardDescription>
             </CardHeader>
             <CardFooter className="flex gap-2 flex-wrap">
                 <div className="flex items-center gap-2 flex-wrap">

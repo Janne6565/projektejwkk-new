@@ -31,6 +31,7 @@ export default {
         liveDemo: toSGA('Live Demo'),
         repos: toSGA('repos'),
         repositories: toSGA('Repositories'),
+        technologies: toSGA('Technologies'),
         appStore: toSGA('App Store'),
         playStore: toSGA('Play Store'),
         visitLink: toSGA('Visit'),

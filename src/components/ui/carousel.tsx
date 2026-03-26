@@ -124,7 +124,7 @@ function FullscreenViewer({images, startIndex, onClose}: {
                                         <img
                                             src={src}
                                             alt={`Slide ${i + 1}`}
-                                            className="max-h-[90vh] w-auto max-w-full object-contain"
+                                            className="max-h-[90vh] w-auto max-w-full object-contain rounded-md"
                                         />
                                     </div>
                                 ))}
@@ -179,19 +179,24 @@ interface CarouselProps {
 export function Carousel({images, className}: CarouselProps) {
     const {emblaRef, emblaApi, selectedIndex, canScrollPrev, canScrollNext} = useCarousel({loop: true})
     const [fullscreenIndex, setFullscreenIndex] = React.useState<number | null>(null)
+    const [loaded, setLoaded] = React.useState(false)
 
     return (
         <>
             <div className={cn("relative", className)}>
-                <div ref={emblaRef} className="overflow-hidden rounded-lg">
+                {!loaded && (
+                    <div className="h-80 w-full rounded-lg bg-muted animate-pulse"/>
+                )}
+                <div ref={emblaRef} className={cn("overflow-hidden rounded-lg", !loaded && "h-0 overflow-hidden")}>
                     <div className="flex">
                         {images.map((src, i) => (
                             <div key={src} className="min-w-0 flex-[0_0_100%] flex items-center justify-center">
                                 <img
                                     src={src}
                                     alt={`Slide ${i + 1}`}
-                                    className="max-h-80 max-w-full h-auto w-auto object-contain cursor-pointer"
+                                    className="max-h-80 max-w-full h-auto w-auto object-contain cursor-pointer rounded"
                                     onClick={() => setFullscreenIndex(i)}
+                                    onLoad={i === 0 ? () => setLoaded(true) : undefined}
                                 />
                             </div>
                         ))}

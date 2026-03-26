@@ -7,6 +7,7 @@ import {toSGA} from '@/lib/sga';
 import {Accordion, AccordionItem, AccordionTrigger} from "@/components/ui/accordion.tsx";
 import AutoHeightAccordionContent from "@/components/ui/auto-height-accordion-content.tsx";
 import {Carousel} from "@/components/ui/carousel.tsx";
+import {categorizeTechnologies} from "@/lib/technology-categories.ts";
 
 function repoName(url: string): string {
     const match = url.match(/github\.com\/(.+)/);
@@ -39,6 +40,36 @@ const ProjectDetailModal = () => {
                 })()}
 
                 <AdditionalLinks info={project.additionalInformation}/>
+
+                {project.additionalInformation.technologies && (() => {
+                    const techs = project.additionalInformation.technologies.split(",").map(t => t.trim()).filter(Boolean);
+                    const groups = categorizeTechnologies(techs);
+                    return groups.length > 0 ? (
+                        <Accordion type={"single"} collapsible>
+                            <AccordionItem value={"technologies"}>
+                                <AccordionTrigger className={"flex items-center cursor-pointer"}>
+                                    <h4 className="font-medium">
+                                        {t('projects.technologies')}
+                                    </h4>
+                                </AccordionTrigger>
+                                <AutoHeightAccordionContent className={"pb-5 px-6"} innerClassName={"flex gap-4 flex-col"}>
+                                    {groups.map((group) => (
+                                        <div key={group.category}>
+                                            <p className="text-xs text-muted-foreground mb-1.5">{s(group.category)}</p>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {group.items.map((tech) => (
+                                                    <Badge key={tech} variant="secondary" className="text-xs">
+                                                        {s(tech)}
+                                                    </Badge>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </AutoHeightAccordionContent>
+                            </AccordionItem>
+                        </Accordion>
+                    ) : null;
+                })()}
 
                 {project.contributions.length > 0 && (
                     <Accordion type={"single"} collapsible>
