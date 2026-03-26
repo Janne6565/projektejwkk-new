@@ -34,6 +34,7 @@ export default {
         playStore: 'Play Store',
         visitLink: 'Visita',
         noProjects: 'Nulla opera inventa',
+        error: 'Error in operibus onerandis fuit.',
         loading: 'Opera onerantur...',
         chart: {
             less: 'Minus',

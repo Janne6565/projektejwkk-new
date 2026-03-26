@@ -35,6 +35,7 @@ export default {
         playStore: toSGA('Play Store'),
         visitLink: toSGA('Visit'),
         noProjects: toSGA('No projects found'),
+        error: toSGA('There was an issue loading the projects'),
         loading: toSGA('Loading projects') + '...',
         chart: {
             less: toSGA('Less'),

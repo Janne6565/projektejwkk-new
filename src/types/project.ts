@@ -11,6 +11,7 @@ export interface AdditionalInformation {
     link?: string;
     appstore?: string;
     playstore?: string;
+    images?: string;
 }
 
 export interface ApiProject {

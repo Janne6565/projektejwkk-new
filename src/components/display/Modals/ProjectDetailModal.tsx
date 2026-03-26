@@ -1,18 +1,12 @@
 import {useTranslation} from 'react-i18next';
 import {useModal} from '@/components/technical/modal-provider';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,} from '@/components/ui/dialog';
 import {Badge} from '@/components/ui/badge';
 import AdditionalLinks from './AdditionalLinks';
 import {toSGA} from '@/lib/sga';
-import {totalContributions} from '@/types/project';
-import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion.tsx";
+import {Accordion, AccordionItem, AccordionTrigger} from "@/components/ui/accordion.tsx";
 import AutoHeightAccordionContent from "@/components/ui/auto-height-accordion-content.tsx";
+import {Carousel} from "@/components/ui/carousel.tsx";
 
 function repoName(url: string): string {
     const match = url.match(/github\.com\/(.+)/);
@@ -39,10 +33,17 @@ const ProjectDetailModal = () => {
                     <DialogDescription>{s(description)}</DialogDescription>
                 </DialogHeader>
 
+                {project.additionalInformation.images && (() => {
+                    const imageList = project.additionalInformation.images.split(",").map(s => s.trim()).filter(Boolean);
+                    return imageList.length > 0 ? <Carousel images={imageList}/> : null;
+                })()}
+
+                <AdditionalLinks info={project.additionalInformation}/>
+
                 {project.contributions.length > 0 && (
                     <Accordion type={"single"} collapsible>
                         <AccordionItem value={"repositories"}>
-                            <AccordionTrigger>
+                            <AccordionTrigger className={"flex items-center cursor-pointer"}>
                                 <h4 className="font-medium">
                                     {t('projects.repositories')}
                                 </h4>
@@ -79,9 +80,6 @@ const ProjectDetailModal = () => {
                                                     {repo.reviews} {t('projects.detail.reviews')}
                                                 </Badge>
                                             )}
-                                            <Badge variant="secondary" className="text-xs">
-                                                {totalContributions(repo)} {t('projects.detail.total')}
-                                            </Badge>
                                         </div>
                                     </div>
                                 ))}
@@ -89,8 +87,6 @@ const ProjectDetailModal = () => {
                         </AccordionItem>
                     </Accordion>
                 )}
-
-                <AdditionalLinks info={project.additionalInformation}/>
             </DialogContent>
         </Dialog>
     );

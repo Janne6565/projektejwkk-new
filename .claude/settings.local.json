@@ -13,7 +13,10 @@
       "Bash(npx vite:*)",
       "Bash(npx eslint:*)",
       "WebFetch(domain:www.npmjs.com)",
-      "Bash(npm search:*)"
+      "Bash(npm search:*)",
+      "Bash(ls /home/janne/projektejwkk-new/src/components/ui/carousel*)",
+      "Bash(npm ls:*)",
+      "Bash(npm install:*)"
     ]
   }
 }

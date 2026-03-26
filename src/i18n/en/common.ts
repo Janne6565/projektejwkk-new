@@ -28,6 +28,7 @@ export default {
         playStore: 'Play Store',
         visitLink: 'Visit',
         noProjects: 'No projects found',
+        error: 'There was an issue loading the projects.',
         loading: 'Loading projects...',
         chart: {
             less: 'Less',

@@ -4,39 +4,33 @@ import ProjectCard from '@/components/display/Projects/ProjectCard/ProjectCard';
 import ProjectsLoadingSkeleton from '@/components/display/Projects/ProjectsLoadingSkeleton';
 import { useModal } from '@/components/technical/modal-provider';
 import useProjects from '@/hooks/use-projects';
+import type { Project } from '@/types/project';
 
-const ProjectsGrid = () => {
-  const { projects, isLoading } = useProjects();
+const AnimatedGrid = ({ projects }: { projects: Project[] }) => {
   const { openProjectModal } = useModal();
-  const { t } = useTranslation();
   const gridRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (!gridRef.current) return;
 
+    const el = gridRef.current;
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setVisible(true);
+            observer.disconnect();
+            return;
+          }
         }
       },
-      { threshold: 0.1 },
+      { threshold: 0 },
     );
 
-    observer.observe(gridRef.current);
+    observer.observe(el);
     return () => observer.disconnect();
-  }, [projects]);
-
-  if (isLoading) return <ProjectsLoadingSkeleton />;
-  if (!projects || projects.length === 0) {
-    return (
-      <p className="text-center text-muted-foreground">
-        {t('projects.noProjects')}
-      </p>
-    );
-  }
+  }, []);
 
   return (
     <div
@@ -61,6 +55,29 @@ const ProjectsGrid = () => {
       ))}
     </div>
   );
+};
+
+const ProjectsGrid = () => {
+  const { projects, isLoading, error } = useProjects();
+  const { t } = useTranslation();
+
+  if (isLoading) return <ProjectsLoadingSkeleton />;
+  if (error) {
+    return (
+      <p className="text-center text-muted-foreground">
+        {t('projects.error')}
+      </p>
+    );
+  }
+  if (!projects || projects.length === 0) {
+    return (
+      <p className="text-center text-muted-foreground">
+        {t('projects.noProjects')}
+      </p>
+    );
+  }
+
+  return <AnimatedGrid projects={projects} />;
 };
 
 export default ProjectsGrid;
