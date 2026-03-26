@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portfolio-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portfolio-ui
+  template:
+    metadata:
+      labels:
+        app: portfolio-ui
+    spec:
+      containers:
+        - name: portfolio-ui
+          image: ghcr.io/janne6565/projektejwkk-new:sha-6ff75a1
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 10
