@@ -16,7 +16,13 @@
       "Bash(npm search:*)",
       "Bash(ls /home/janne/projektejwkk-new/src/components/ui/carousel*)",
       "Bash(npm ls:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(find /home/janne/WebstormProjects/projektejwkk-new/src -type f \\\\\\(-name *.png -o -name *.jpg -o -name *.jpeg -o -name *.svg -o -name *.webp -o -name *.gif \\\\\\))",
+      "Bash(grep -r \"React.lazy\\\\|Suspense\\\\|dynamic\\\\|lazy\" /home/janne/WebstormProjects/projektejwkk-new/src --include=*.tsx --include=*.ts)",
+      "Bash(grep -E \"gsap|animations|@gsap\" /home/janne/WebstormProjects/projektejwkk-new/src/components -r --include=*.tsx)",
+      "WebFetch(domain:pagespeed.web.dev)",
+      "WebFetch(domain:www.googleapis.com)",
+      "Bash(sort -t'│' -k1 -rn)"
     ]
   }
 }

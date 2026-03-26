@@ -1,8 +1,10 @@
+import { lazy, Suspense } from 'react';
 import FloatingHeader from '@/components/display/FloatingHeader/FloatingHeader';
 import HeroSection from '@/components/display/HeroSection/HeroSection';
-import ProjectsSection from '@/components/display/ProjectsSection/ProjectsSection';
-import ModalRoot from '@/components/display/Modals/ModalRoot';
 import {ModalProvider} from '@/components/technical/modal-provider';
+
+const ProjectsSection = lazy(() => import('@/components/display/ProjectsSection/ProjectsSection'));
+const ModalRoot = lazy(() => import('@/components/display/Modals/ModalRoot'));
 
 const RootPage = () => {
     return (
@@ -10,8 +12,12 @@ const RootPage = () => {
             <div className="bg-background w-screen transition-colors min-h-screen">
                 <FloatingHeader/>
                 <HeroSection/>
-                <ProjectsSection/>
-                <ModalRoot/>
+                <Suspense>
+                    <ProjectsSection/>
+                </Suspense>
+                <Suspense>
+                    <ModalRoot/>
+                </Suspense>
             </div>
         </ModalProvider>
     );

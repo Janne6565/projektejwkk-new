@@ -1,9 +1,10 @@
-import {useRef} from 'react';
+import {lazy, Suspense, useRef} from 'react';
 import {ChevronDown} from 'lucide-react';
 import {useTranslation} from 'react-i18next';
-import StarSky from '@/components/display/StarSky/StarSky';
 import {useStarContributions} from '@/hooks/use-star-contributions';
 import useProjects from '@/hooks/use-projects';
+
+const StarSky = lazy(() => import('@/components/display/StarSky/StarSky'));
 
 const HeroSection = () => {
     const {calendar, isLoading} = useProjects();
@@ -18,13 +19,15 @@ const HeroSection = () => {
             className="h-screen flex flex-col items-center justify-center relative overflow-hidden bg-background"
         >
             {!isLoading && isReady && (
-                <StarSky
-                    stars={stars}
-                    uniqueDates={uniqueDates}
-                    earliestDate={earliestDate}
-                    totalContributions={totalContributions}
-                    scrollTriggerRef={sectionRef}
-                />
+                <Suspense>
+                    <StarSky
+                        stars={stars}
+                        uniqueDates={uniqueDates}
+                        earliestDate={earliestDate}
+                        totalContributions={totalContributions}
+                        scrollTriggerRef={sectionRef}
+                    />
+                </Suspense>
             )}
 
             <div className={"max-w-[80vw] md:max-w-[unset] mb-[3vw]"}>

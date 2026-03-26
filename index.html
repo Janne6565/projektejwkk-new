@@ -26,6 +26,15 @@
 
     <meta name="robots" content="index, follow"/>
     <meta name="theme-color" content="#000000"/>
+
+    <!-- Preconnect to API for faster data fetching -->
+    <link rel="preconnect" href="https://project-manager.jannekeipert.de" crossorigin/>
+    <link rel="dns-prefetch" href="https://project-manager.jannekeipert.de"/>
+
+    <!-- Prevent dark/light mode flash: apply theme class before first paint -->
+    <script>
+      (function(){var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.classList.add(t)}else if(matchMedia('(prefers-color-scheme:dark)').matches){document.documentElement.classList.add('dark')}})();
+    </script>
 </head>
 <body>
 <div id="root"></div>
