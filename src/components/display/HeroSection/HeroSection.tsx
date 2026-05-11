@@ -16,7 +16,7 @@ const HeroSection = () => {
         <section
             className="h-screen flex flex-col items-center justify-center relative overflow-hidden bg-background"
         >
-            <div className="absolute inset-0 pointer-events-none z-10" style={{background: 'radial-gradient(ellipse at center, transparent 40%, hsl(var(--background)) 100%)'}}/>
+            <div className="absolute inset-0 pointer-events-none z-10" style={{background: 'radial-gradient(ellipse at center, transparent 40%, var(--background) 100%)'}}/>
             {!isLoading && isReady && (
                 <Suspense>
                     <StarSky
