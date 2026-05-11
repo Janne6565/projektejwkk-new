@@ -11,7 +11,7 @@ const SPRITE_SIZE_COUNT = 8;
 const SPRITE_PADDING = 2;
 const GLOW_RADIUS = 0.08;
 const TOOLTIP_THRESHOLD = 0.02;
-const AUTO_DURATION_MS = 8000;
+const AUTO_DURATION_MS = 4000;
 
 interface StarSkyProps {
   stars: StarData[];
