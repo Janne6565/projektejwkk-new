@@ -294,9 +294,7 @@ const StarSky = ({
                 }
             }
 
-            if (rawProgress < 1) {
-                rafRef.current = requestAnimationFrame(render);
-            }
+            rafRef.current = requestAnimationFrame(render);
         };
 
         rafRef.current = requestAnimationFrame(render);
