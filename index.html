@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Janne Keipert - Software Developer</title>
     <meta name="description"
-          content="Portfolio of Janne Keipert - Software Developer. Explore my projects, contributions, and the technologies I work with."/>
+          content="Portfolio of Janne Keipert, a Software Developer. Browse my open-source projects, GitHub contribution history, and the technologies I work with every day."/>
     <meta name="author" content="Janne Keipert"/>
     <link rel="canonical" href="https://jannekeipert.de"/>
 
@@ -14,15 +14,21 @@
     <meta property="og:url" content="https://jannekeipert.de"/>
     <meta property="og:title" content="Janne Keipert - Software Developer"/>
     <meta property="og:description"
-          content="Portfolio of Janne Keipert - Software Developer. Explore my projects, contributions, and the technologies I work with."/>
+          content="Portfolio of Janne Keipert, a Software Developer. Browse my open-source projects, GitHub contribution history, and the technologies I work with every day."/>
     <meta property="og:locale" content="en_US"/>
     <meta property="og:site_name" content="Janne Keipert"/>
+    <meta property="og:image" content="https://jannekeipert.de/og-image.png"/>
+    <meta property="og:image:width" content="1200"/>
+    <meta property="og:image:height" content="630"/>
+    <meta property="og:image:alt" content="Janne Keipert - Software Developer"/>
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="Janne Keipert - Software Developer"/>
     <meta name="twitter:description"
-          content="Portfolio of Janne Keipert - Software Developer. Explore my projects, contributions, and the technologies I work with."/>
+          content="Portfolio of Janne Keipert, a Software Developer. Browse my open-source projects, GitHub contribution history, and the technologies I work with every day."/>
+    <meta name="twitter:image" content="https://jannekeipert.de/og-image.png"/>
+    <meta name="twitter:image:alt" content="Janne Keipert - Software Developer"/>
 
     <meta name="robots" content="index, follow"/>
     <meta name="theme-color" content="#000000"/>
@@ -30,6 +36,30 @@
     <!-- Preconnect to API for faster data fetching -->
     <link rel="preconnect" href="https://project-manager.jannekeipert.de" crossorigin/>
     <link rel="dns-prefetch" href="https://project-manager.jannekeipert.de"/>
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://jannekeipert.de/#person",
+          "name": "Janne Keipert",
+          "jobTitle": "Software Developer",
+          "url": "https://jannekeipert.de"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://jannekeipert.de/#website",
+          "url": "https://jannekeipert.de",
+          "name": "Janne Keipert",
+          "description": "Portfolio of Janne Keipert, a Software Developer. Browse my open-source projects, GitHub contribution history, and the technologies I work with every day.",
+          "author": { "@id": "https://jannekeipert.de/#person" }
+        }
+      ]
+    }
+    </script>
 
     <!-- Prevent dark/light mode flash: apply theme class before first paint -->
     <script>
