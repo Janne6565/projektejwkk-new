@@ -4,7 +4,7 @@ import gsap from 'gsap';
 import type { StarData } from '@/hooks/use-star-contributions';
 import { toRoman, toSGA } from '@/lib/sga';
 
-const ease = gsap.parseEase('power2.inOut');
+const ease = gsap.parseEase('power4.inOut');
 
 const TWINKLE_SPEED = 0.0008;
 const DRIFT_SPEED = 0.0003;
