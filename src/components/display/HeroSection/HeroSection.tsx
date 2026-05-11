@@ -16,15 +16,23 @@ const HeroSection = () => {
         <section
             className="h-screen flex flex-col items-center justify-center relative overflow-hidden bg-background"
         >
-            <div className="absolute inset-0 pointer-events-none z-10" style={{background: 'radial-gradient(ellipse at center, transparent 40%, var(--background) 100%)'}}/>
+            <div className="absolute inset-0 pointer-events-none z-10" style={{background: 'radial-gradient(ellipse at center, transparent 65%, var(--background) 100%)'}}/>
+            {(isLoading || !isReady) && (
+                <div className="absolute bottom-27 left-1/2 -translate-x-1/2 z-10 text-center pointer-events-none select-none space-y-3">
+                    <div className="h-5 w-48 bg-muted animate-pulse rounded-full mx-auto"/>
+                    <div className="h-8 w-64 bg-muted animate-pulse rounded-full mx-auto"/>
+                </div>
+            )}
             {!isLoading && isReady && (
                 <Suspense>
-                    <StarSky
-                        stars={stars}
-                        uniqueDates={uniqueDates}
-                        earliestDate={earliestDate}
-                        totalContributions={totalContributions}
-                    />
+                    <div className="animate-in fade-in-0 duration-700">
+                        <StarSky
+                            stars={stars}
+                            uniqueDates={uniqueDates}
+                            earliestDate={earliestDate}
+                            totalContributions={totalContributions}
+                        />
+                    </div>
                 </Suspense>
             )}
 
