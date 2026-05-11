@@ -26,14 +26,12 @@ const HeroSection = () => {
             <div className="absolute inset-0 pointer-events-none z-10" style={{background: 'radial-gradient(ellipse at center, transparent 65%, var(--background) 100%)'}}/>
             <Suspense fallback={<ContributionsSkeleton/>}>
                 {!isLoading && isReady ? (
-                    <div className="animate-in fade-in-0 duration-700">
-                        <StarSky
-                            stars={stars}
-                            uniqueDates={uniqueDates}
-                            earliestDate={earliestDate}
-                            totalContributions={totalContributions}
-                        />
-                    </div>
+                    <StarSky
+                        stars={stars}
+                        uniqueDates={uniqueDates}
+                        earliestDate={earliestDate}
+                        totalContributions={totalContributions}
+                    />
                 ) : (
                     <ContributionsSkeleton/>
                 )}

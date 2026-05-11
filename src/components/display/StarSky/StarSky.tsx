@@ -316,7 +316,7 @@ const StarSky = ({
                 style={{opacity: 0}}
             />
             <div
-                className="absolute bottom-27 left-1/2 -translate-x-1/2 z-10 text-center pointer-events-none select-none">
+                className="absolute bottom-27 left-1/2 -translate-x-1/2 z-10 text-center pointer-events-none select-none animate-in fade-in-0 duration-500">
                 <p className="text-lg md:text-xl text-muted-foreground/80 tabular-nums">
           <span ref={countRef} className="font-semibold text-foreground">
             0
