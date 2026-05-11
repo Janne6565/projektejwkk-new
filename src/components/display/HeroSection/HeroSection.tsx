@@ -1,4 +1,4 @@
-import {lazy, Suspense, useRef} from 'react';
+import {lazy, Suspense} from 'react';
 import {ChevronDown} from 'lucide-react';
 import {useTranslation} from 'react-i18next';
 import {useStarContributions} from '@/hooks/use-star-contributions';
@@ -11,11 +11,9 @@ const HeroSection = () => {
     const {stars, uniqueDates, earliestDate, totalContributions, isReady} =
         useStarContributions(calendar);
     const {t} = useTranslation();
-    const sectionRef = useRef<HTMLElement>(null);
 
     return (
         <section
-            ref={sectionRef}
             className="h-screen flex flex-col items-center justify-center relative overflow-hidden bg-background"
         >
             {!isLoading && isReady && (
@@ -25,7 +23,6 @@ const HeroSection = () => {
                         uniqueDates={uniqueDates}
                         earliestDate={earliestDate}
                         totalContributions={totalContributions}
-                        scrollTriggerRef={sectionRef}
                     />
                 </Suspense>
             )}
@@ -43,10 +40,8 @@ const HeroSection = () => {
                 type="button"
                 className="absolute bottom-8 animate-bounce z-10 cursor-pointer"
                 onClick={() => {
-                    // The hero is pinned for 300vh by ScrollTrigger.
-                    // Scroll past the full pinned region to land on the next section.
                     window.scrollTo({
-                        top: window.innerHeight * 4,
+                        top: window.innerHeight,
                         behavior: 'smooth',
                     });
                 }}

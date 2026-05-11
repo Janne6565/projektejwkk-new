@@ -1,12 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGSAP } from '@gsap/react';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import gsap from 'gsap';
 import type { StarData } from '@/hooks/use-star-contributions';
 import { toRoman, toSGA } from '@/lib/sga';
-
-gsap.registerPlugin(ScrollTrigger);
 
 const TWINKLE_SPEED = 0.0008;
 const DRIFT_SPEED = 0.0003;
@@ -16,13 +11,13 @@ const SPRITE_SIZE_COUNT = 8;
 const SPRITE_PADDING = 2;
 const GLOW_RADIUS = 0.08;
 const TOOLTIP_THRESHOLD = 0.02;
+const AUTO_DURATION_MS = 8000;
 
 interface StarSkyProps {
   stars: StarData[];
   uniqueDates: string[];
   earliestDate: string;
   totalContributions: number;
-  scrollTriggerRef: React.RefObject<HTMLElement | null>;
 }
 
 const ROMAN_MONTHS = [
@@ -94,16 +89,10 @@ const StarSky = ({
   uniqueDates,
   earliestDate,
   totalContributions,
-  scrollTriggerRef,
 }: StarSkyProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dateRef = useRef<HTMLParagraphElement>(null);
   const countRef = useRef<HTMLSpanElement>(null);
-  const progressRef = useRef(0);
-  const smoothRef = useRef(0);
-  const prevRawRef = useRef(0);
-  const velocityRef = useRef(0);
-  const prevTimeRef = useRef(0);
   const rafRef = useRef(0);
   const startTimeRef = useRef(0);
   const spritesRef = useRef<OffscreenCanvas[] | null>(null);
@@ -119,24 +108,6 @@ const StarSky = ({
     localeRef.current = i18n.language;
     lastDateTextRef.current = ''; // force date text re-render
   }, [i18n.language]);
-
-  // Set up GSAP ScrollTrigger
-  useGSAP(
-    () => {
-      if (!scrollTriggerRef.current) return;
-
-      ScrollTrigger.create({
-        trigger: scrollTriggerRef.current,
-        start: 'top top',
-        end: '+=200%',
-        pin: true,
-        onUpdate: (self) => {
-          progressRef.current = self.progress;
-        },
-      });
-    },
-    { scope: scrollTriggerRef },
-  );
 
   // Canvas sizing — use ResizeObserver so the bitmap updates immediately
   // when the CSS layout changes, avoiding stretched frames.
@@ -162,9 +133,9 @@ const StarSky = ({
     return () => ro.disconnect();
   }, []);
 
-  // Mouse tracking on the section element
+  // Mouse tracking on the canvas element
   useEffect(() => {
-    const el = scrollTriggerRef.current;
+    const el = canvasRef.current;
     if (!el) return;
 
     const onMove = (e: MouseEvent) => {
@@ -184,7 +155,7 @@ const StarSky = ({
       el.removeEventListener('mousemove', onMove);
       el.removeEventListener('mouseleave', onLeave);
     };
-  }, [scrollTriggerRef]);
+  }, []);
 
   // Pre-compute sprite indices per star
   const spriteIndicesRef = useRef<Uint8Array | null>(null);
@@ -215,67 +186,10 @@ const StarSky = ({
     // Pre-compute sprite half-sizes for positioning
     const spriteHalves = sprites.map((s) => s.width / 2);
 
-    const MOMENTUM_DECAY = 0.95;
-    const MOMENTUM_MAX_DRIFT = 0.03;
-    const LERP_FAST = 18;
-    const LERP_NORMAL = 8;
-
     const render = (time: number) => {
       const elapsed = time - startTimeRef.current;
-      const dt = Math.min(
-        (time - (prevTimeRef.current || time)) / 1000,
-        0.05,
-      );
-      prevTimeRef.current = time;
-
-      const raw = progressRef.current;
-      const rawDelta = raw - prevRawRef.current;
-      prevRawRef.current = raw;
-
-      const atBoundary = raw <= 0 || raw >= 1;
-      const gap = smoothRef.current - raw;
-      // Scrolling backward (raw dropped below smooth) — kill momentum
-      const scrollingBack = gap > 0.001;
-
-      if (atBoundary || scrollingBack) {
-        velocityRef.current = 0;
-      } else if (Math.abs(rawDelta) > 0.00001) {
-        // Only track positive (forward) velocity for momentum
-        velocityRef.current =
-          rawDelta > 0 ? rawDelta / Math.max(dt, 0.001) : 0;
-      } else {
-        velocityRef.current *= MOMENTUM_DECAY;
-        if (Math.abs(velocityRef.current) < 0.01) velocityRef.current = 0;
-      }
-
-      // Target = raw + small forward drift from momentum (capped)
-      let target = raw;
-      if (
-        !atBoundary &&
-        !scrollingBack &&
-        Math.abs(rawDelta) < 0.00001 &&
-        velocityRef.current > 0.01
-      ) {
-        const drift = velocityRef.current * dt * 0.1;
-        target = Math.min(raw + MOMENTUM_MAX_DRIFT, smoothRef.current + drift);
-      }
-      target = Math.max(0, Math.min(1, target));
-
-      // Adaptive lerp: fast when far from target or scrolling back, gentle when close
-      const lerpSpeed =
-        Math.abs(target - smoothRef.current) > 0.02 ? LERP_FAST : LERP_NORMAL;
-      smoothRef.current +=
-        (target - smoothRef.current) * (1 - Math.exp(-lerpSpeed * dt));
-
-      // Hard clamp: smooth can never be more than a tiny amount past raw
-      smoothRef.current = Math.max(
-        0,
-        Math.min(1, Math.min(smoothRef.current, raw + MOMENTUM_MAX_DRIFT)),
-      );
-
-      // Scale progress so stars finish revealing at ~90% scroll,
-      // leaving the last 10% as an empty buffer before unpin.
-      const progress = Math.min(smoothRef.current / 0.9, 1);
+      const rawProgress = Math.min(elapsed / AUTO_DURATION_MS, 1);
+      const progress = Math.min(rawProgress / 0.9, 1);
       const w = canvas.width / (window.devicePixelRatio || 1);
       const h = canvas.height / (window.devicePixelRatio || 1);
 
@@ -377,7 +291,9 @@ const StarSky = ({
         }
       }
 
-      rafRef.current = requestAnimationFrame(render);
+      if (rawProgress < 1) {
+        rafRef.current = requestAnimationFrame(render);
+      }
     };
 
     rafRef.current = requestAnimationFrame(render);
@@ -391,7 +307,7 @@ const StarSky = ({
     <>
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full pointer-events-none"
+        className="absolute inset-0 w-full h-full"
       />
       <div
         ref={tooltipRef}
