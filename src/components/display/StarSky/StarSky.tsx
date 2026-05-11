@@ -189,7 +189,8 @@ const StarSky = ({
     const render = (time: number) => {
       const elapsed = time - startTimeRef.current;
       const rawProgress = Math.min(elapsed / AUTO_DURATION_MS, 1);
-      const progress = Math.min(rawProgress / 0.9, 1);
+      const eased = rawProgress * rawProgress * (3 - 2 * rawProgress);
+      const progress = Math.min(eased / 0.9, 1);
       const w = canvas.width / (window.devicePixelRatio || 1);
       const h = canvas.height / (window.devicePixelRatio || 1);
 
