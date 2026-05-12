@@ -6,6 +6,13 @@ import {Dialog as DialogPrimitive} from "radix-ui"
 
 type CarouselApi = UseEmblaCarouselType[1]
 
+type Slide = { kind: "image"; src: string } | { kind: "video"; embedUrl: string }
+
+function toYouTubeEmbedUrl(url: string): string | null {
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/)
+    return match ? `https://www.youtube.com/embed/${match[1]}` : null
+}
+
 function useCarousel(options: { loop: boolean }) {
     const [emblaRef, emblaApi] = useEmblaCarousel(options)
     const [selectedIndex, setSelectedIndex] = React.useState(0)
@@ -33,14 +40,14 @@ function useCarousel(options: { loop: boolean }) {
     return {emblaRef, emblaApi, selectedIndex, canScrollPrev, canScrollNext}
 }
 
-function CarouselControls({images, selectedIndex, canScrollPrev, canScrollNext, emblaApi}: {
-    images: string[]
+function CarouselControls({count, selectedIndex, canScrollPrev, canScrollNext, emblaApi}: {
+    count: number
     selectedIndex: number
     canScrollPrev: boolean
     canScrollNext: boolean
     emblaApi: CarouselApi
 }) {
-    if (images.length <= 1) return null
+    if (count <= 1) return null
 
     return (
         <>
@@ -60,7 +67,7 @@ function CarouselControls({images, selectedIndex, canScrollPrev, canScrollNext, 
             </button>
 
             <div className="mt-2 flex justify-center gap-1.5">
-                {images.map((_, i) => (
+                {Array.from({length: count}, (_, i) => (
                     <button
                         key={i}
                         onClick={() => emblaApi?.scrollTo(i)}
@@ -77,8 +84,8 @@ function CarouselControls({images, selectedIndex, canScrollPrev, canScrollNext, 
     )
 }
 
-function FullscreenViewer({images, startIndex, onClose}: {
-    images: string[]
+function FullscreenViewer({slides, startIndex, onClose}: {
+    slides: Slide[]
     startIndex: number
     onClose: () => void
 }) {
@@ -119,19 +126,28 @@ function FullscreenViewer({images, startIndex, onClose}: {
                     <div className="relative w-full max-w-7xl px-16">
                         <div ref={emblaRef} className="overflow-hidden">
                             <div className="flex">
-                                {images.map((src, i) => (
-                                    <div key={src} className="min-w-0 flex-[0_0_100%] flex items-center justify-center">
-                                        <img
-                                            src={src}
-                                            alt={`Slide ${i + 1}`}
-                                            className="max-h-[90vh] w-auto max-w-full object-contain rounded-md"
-                                        />
+                                {slides.map((slide, i) => (
+                                    <div key={i} className="min-w-0 flex-[0_0_100%] flex items-center justify-center">
+                                        {slide.kind === "image" ? (
+                                            <img
+                                                src={slide.src}
+                                                alt={`Slide ${i + 1}`}
+                                                className="max-h-[90vh] w-auto max-w-full object-contain rounded-md"
+                                            />
+                                        ) : (
+                                            <iframe
+                                                src={slide.embedUrl}
+                                                className="w-full aspect-video rounded-md max-h-[90vh]"
+                                                allowFullScreen
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            />
+                                        )}
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        {images.length > 1 && (
+                        {slides.length > 1 && (
                             <>
                                 <button
                                     onClick={() => emblaApi?.scrollPrev()}
@@ -149,7 +165,7 @@ function FullscreenViewer({images, startIndex, onClose}: {
                                 </button>
 
                                 <div className="mt-4 flex justify-center gap-2">
-                                    {images.map((_, i) => (
+                                    {slides.map((_, i) => (
                                         <button
                                             key={i}
                                             onClick={() => emblaApi?.scrollTo(i)}
@@ -173,13 +189,24 @@ function FullscreenViewer({images, startIndex, onClose}: {
 
 interface CarouselProps {
     images: string[]
+    youtubeUrl?: string
     className?: string
 }
 
-export function Carousel({images, className}: CarouselProps) {
+export function Carousel({images, youtubeUrl, className}: CarouselProps) {
+    const videoSlides: Slide[] = youtubeUrl ? (() => {
+        const embedUrl = toYouTubeEmbedUrl(youtubeUrl)
+        return embedUrl ? [{kind: "video" as const, embedUrl}] : []
+    })() : []
+
+    const slides: Slide[] = [
+        ...videoSlides,
+        ...images.map(src => ({kind: "image" as const, src})),
+    ]
+
     const {emblaRef, emblaApi, selectedIndex, canScrollPrev, canScrollNext} = useCarousel({loop: true})
     const [fullscreenIndex, setFullscreenIndex] = React.useState<number | null>(null)
-    const [loaded, setLoaded] = React.useState(false)
+    const [loaded, setLoaded] = React.useState(images.length === 0 || !!youtubeUrl)
 
     return (
         <>
@@ -189,22 +216,31 @@ export function Carousel({images, className}: CarouselProps) {
                 )}
                 <div ref={emblaRef} className={cn("overflow-hidden rounded-lg", !loaded && "h-0 overflow-hidden")}>
                     <div className="flex">
-                        {images.map((src, i) => (
-                            <div key={src} className="min-w-0 flex-[0_0_100%] flex items-center justify-center">
-                                <img
-                                    src={src}
-                                    alt={`Slide ${i + 1}`}
-                                    className="max-h-80 max-w-full h-auto w-auto object-contain cursor-pointer rounded"
-                                    onClick={() => setFullscreenIndex(i)}
-                                    onLoad={i === 0 ? () => setLoaded(true) : undefined}
-                                />
+                        {slides.map((slide, i) => (
+                            <div key={i} className="min-w-0 flex-[0_0_100%] flex items-center justify-center">
+                                {slide.kind === "image" ? (
+                                    <img
+                                        src={slide.src}
+                                        alt={`Slide ${i + 1}`}
+                                        className="max-h-80 max-w-full h-auto w-auto object-contain cursor-pointer rounded"
+                                        onClick={() => setFullscreenIndex(i)}
+                                        onLoad={i === videoSlides.length ? () => setLoaded(true) : undefined}
+                                    />
+                                ) : (
+                                    <iframe
+                                        src={slide.embedUrl}
+                                        className="w-full aspect-video rounded"
+                                        allowFullScreen
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    />
+                                )}
                             </div>
                         ))}
                     </div>
                 </div>
 
                 <CarouselControls
-                    images={images}
+                    count={slides.length}
                     selectedIndex={selectedIndex}
                     canScrollPrev={canScrollPrev}
                     canScrollNext={canScrollNext}
@@ -214,7 +250,7 @@ export function Carousel({images, className}: CarouselProps) {
 
             {fullscreenIndex !== null && (
                 <FullscreenViewer
-                    images={images}
+                    slides={slides}
                     startIndex={fullscreenIndex}
                     onClose={() => setFullscreenIndex(null)}
                 />

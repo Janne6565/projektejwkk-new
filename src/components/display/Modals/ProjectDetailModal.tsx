@@ -34,9 +34,13 @@ const ProjectDetailModal = () => {
                     <DialogDescription>{s(description)}</DialogDescription>
                 </DialogHeader>
 
-                {project.additionalInformation.images && (() => {
-                    const imageList = project.additionalInformation.images.split(",").map(s => s.trim()).filter(Boolean);
-                    return imageList.length > 0 ? <Carousel images={imageList}/> : null;
+                {(() => {
+                    const imageList = project.additionalInformation.images
+                        ? project.additionalInformation.images.split(",").map(s => s.trim()).filter(Boolean)
+                        : [];
+                    const youtube = project.additionalInformation.youtube;
+                    if (imageList.length === 0 && !youtube) return null;
+                    return <Carousel images={imageList} youtubeUrl={youtube}/>;
                 })()}
 
                 <AdditionalLinks info={project.additionalInformation}/>

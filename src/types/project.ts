@@ -12,6 +12,7 @@ export interface AdditionalInformation {
     appstore?: string;
     playstore?: string;
     images?: string;
+    youtube?: string;
     technologies?: string;
 }
 
