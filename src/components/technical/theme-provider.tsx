@@ -1,4 +1,4 @@
-import {createContext, useContext} from 'react';
+import {createContext, useContext, useEffect} from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -9,7 +9,12 @@ interface ThemeContext {
 const ThemeContext = createContext<ThemeContext | undefined>(undefined);
 
 export function ThemeProvider({children}: { children: React.ReactNode }) {
-  const theme = "dark";
+  const theme: Theme = "dark";
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
 
   return (
     <ThemeContext.Provider value={{theme}}>

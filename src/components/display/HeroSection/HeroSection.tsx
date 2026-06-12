@@ -38,10 +38,10 @@ const HeroSection = () => {
             </Suspense>
 
             <div className={"max-w-[80vw] md:max-w-[unset] mb-[3vw]"}>
-                <h2 className={'text-2xl opacity-90 font-bold text-center mb-2 '}>
+                <h2 className={'text-2xl opacity-90 font-bold text-white text-center mb-2 '}>
                     {t('projects.heroSubtitle')}
                 </h2>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center z-10 drop-shadow-lg">
+                <h1 className="text-4xl md:text-5xl text-white lg:text-6xl font-bold text-center z-10 drop-shadow-lg">
                     {t('projects.heroTitle')}
                 </h1>
             </div>
