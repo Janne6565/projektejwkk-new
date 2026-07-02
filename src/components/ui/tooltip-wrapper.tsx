@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const TooltipWrapper = (props: { children?: ReactNode; tooltip: string; asChild?: boolean }) => {
   return (

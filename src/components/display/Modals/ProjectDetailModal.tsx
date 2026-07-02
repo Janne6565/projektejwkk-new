@@ -4,10 +4,10 @@ import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,} fr
 import {Badge} from '@/components/ui/badge';
 import AdditionalLinks from './AdditionalLinks';
 import {toSGA} from '@/lib/sga';
-import {Accordion, AccordionItem, AccordionTrigger} from "@/components/ui/accordion.tsx";
-import AutoHeightAccordionContent from "@/components/ui/auto-height-accordion-content.tsx";
-import {Carousel} from "@/components/ui/carousel.tsx";
-import {categorizeTechnologies} from "@/lib/technology-categories.ts";
+import {Accordion, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
+import AutoHeightAccordionContent from "@/components/ui/auto-height-accordion-content";
+import {Carousel} from "@/components/ui/carousel";
+import {categorizeTechnologies} from "@/lib/technology-categories";
 
 function repoName(url: string): string {
     const match = url.match(/github\.com\/(.+)/);

@@ -1,6 +1,6 @@
-import TooltipWrapper from '@/components/ui/tooltip-wrapper.tsx';
+import TooltipWrapper from '@/components/ui/tooltip-wrapper';
 import {SiGithub} from '@icons-pack/react-simple-icons';
-import {Button} from '@/components/ui/button.tsx';
+import {Button} from '@/components/ui/button';
 import {useTranslation} from "react-i18next";
 import {toSGA} from "@/lib/sga";
 

@@ -1,4 +1,4 @@
-import LanguageSelectorButton from '@/components/display/FloatingHeader/HeaderButtonGroup/LanguageSelectorButton/LanguageSelectorButton.tsx';
+import LanguageSelectorButton from '@/components/display/FloatingHeader/HeaderButtonGroup/LanguageSelectorButton/LanguageSelectorButton';
 
 const HeaderButtonGroup = () => {
   return (

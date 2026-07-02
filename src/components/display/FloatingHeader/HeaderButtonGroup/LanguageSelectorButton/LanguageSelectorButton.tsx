@@ -1,6 +1,6 @@
-import {Button} from '@/components/ui/button.tsx';
+import {Button} from '@/components/ui/button';
 import {Globe} from 'lucide-react';
-import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip.tsx';
+import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip';
 import {useTranslation} from 'react-i18next';
 import {
     DropdownMenu,
@@ -9,8 +9,8 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu.tsx';
-import type {TranslationKey} from '@/types/i18next.d.ts';
+} from '@/components/ui/dropdown-menu';
+import type {TranslationKey} from '@/types/i18next.d';
 
 const LanguageSelectorButton = () => {
     const {t, i18n} = useTranslation();

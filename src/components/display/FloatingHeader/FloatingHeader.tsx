@@ -1,5 +1,5 @@
-import Logo from '@/components/display/FloatingHeader/Logo/Logo.tsx';
-import HeaderButtonGroup from '@/components/display/FloatingHeader/HeaderButtonGroup/HeaderButtonGroup.tsx';
+import Logo from '@/components/display/FloatingHeader/Logo/Logo';
+import HeaderButtonGroup from '@/components/display/FloatingHeader/HeaderButtonGroup/HeaderButtonGroup';
 
 const FloatingHeader = () => {
   return (

@@ -1,26 +1,25 @@
-import { lazy, Suspense } from 'react';
+'use client';
+
 import FloatingHeader from '@/components/display/FloatingHeader/FloatingHeader';
 import HeroSection from '@/components/display/HeroSection/HeroSection';
-import {ModalProvider} from '@/components/technical/modal-provider';
+import ProjectsSection from '@/components/display/ProjectsSection/ProjectsSection';
+import ModalRoot from '@/components/display/Modals/ModalRoot';
+import type { Project } from '@/types/project';
 
-const ProjectsSection = lazy(() => import('@/components/display/ProjectsSection/ProjectsSection'));
-const ModalRoot = lazy(() => import('@/components/display/Modals/ModalRoot'));
+interface RootPageProps {
+  projects: Project[];
+  calendar: Record<string, number>;
+}
 
-const RootPage = () => {
-    return (
-        <ModalProvider>
-            <div className="bg-background w-screen transition-colors min-h-screen">
-                <FloatingHeader/>
-                <HeroSection/>
-                <Suspense>
-                    <ProjectsSection/>
-                </Suspense>
-                <Suspense>
-                    <ModalRoot/>
-                </Suspense>
-            </div>
-        </ModalProvider>
-    );
+const RootPage = ({ projects, calendar }: RootPageProps) => {
+  return (
+    <div className="bg-background w-screen transition-colors min-h-screen">
+      <FloatingHeader />
+      <HeroSection calendar={calendar} />
+      <ProjectsSection projects={projects} />
+      <ModalRoot />
+    </div>
+  );
 };
 
 export default RootPage;

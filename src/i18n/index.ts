@@ -2,10 +2,10 @@ import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector'; // Optional
 
-import enCommon from './en/common.ts';
-import deCommon from './de/common.ts';
-import laCommon from './la/common.ts';
-import sgaCommon from './sga/common.ts';
+import enCommon from './en/common';
+import deCommon from './de/common';
+import laCommon from './la/common';
+import sgaCommon from './sga/common';
 
 i18next
   .use(initReactI18next)
@@ -18,6 +18,11 @@ i18next
       sga: { common: sgaCommon },
     },
     supportedLngs: ['en', 'de', 'la', 'sga'],
+    // Pin the initial language so the first client render is deterministically
+    // English, matching the server-rendered HTML (avoids hydration mismatch).
+    // Detection runs post-hydration in providers.tsx. LanguageDetector stays
+    // registered so changeLanguage still caches the choice to localStorage.
+    lng: 'en',
     fallbackLng: 'en',
     ns: ['common'], // Default namespace
     defaultNS: 'common',

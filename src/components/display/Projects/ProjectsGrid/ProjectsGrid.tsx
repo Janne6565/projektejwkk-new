@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ProjectCard from '@/components/display/Projects/ProjectCard/ProjectCard';
-import ProjectsLoadingSkeleton from '@/components/display/Projects/ProjectsLoadingSkeleton';
 import { useModal } from '@/components/technical/modal-provider';
-import useProjects from '@/hooks/use-projects';
 import type { Project } from '@/types/project';
 
 const AnimatedGrid = ({ projects }: { projects: Project[] }) => {
@@ -57,18 +55,9 @@ const AnimatedGrid = ({ projects }: { projects: Project[] }) => {
   );
 };
 
-const ProjectsGrid = () => {
-  const { projects, isLoading, error } = useProjects();
+const ProjectsGrid = ({ projects }: { projects: Project[] }) => {
   const { t } = useTranslation();
 
-  if (isLoading) return <ProjectsLoadingSkeleton />;
-  if (error) {
-    return (
-      <p className="text-center text-muted-foreground">
-        {t('projects.error')}
-      </p>
-    );
-  }
   if (!projects || projects.length === 0) {
     return (
       <p className="text-center text-muted-foreground">
