@@ -3,6 +3,7 @@
 import FloatingHeader from '@/components/display/FloatingHeader/FloatingHeader';
 import HeroSection from '@/components/display/HeroSection/HeroSection';
 import ProjectsSection from '@/components/display/ProjectsSection/ProjectsSection';
+import Footer from '@/components/display/Footer/Footer';
 import ModalRoot from '@/components/display/Modals/ModalRoot';
 import type { Project } from '@/types/project';
 
@@ -17,6 +18,7 @@ const RootPage = ({ projects, calendar }: RootPageProps) => {
       <FloatingHeader />
       <HeroSection calendar={calendar} />
       <ProjectsSection projects={projects} />
+      <Footer />
       <ModalRoot />
     </div>
   );
