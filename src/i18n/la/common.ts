@@ -24,7 +24,7 @@ export default {
         heroTitle: 'Janne Keipert',
         gridTitle: 'Opera',
         contributions: 'contributiones',
-        contributionsSince: 'contributiones ab',
+        contributionsAsOf: 'contributiones usque ad',
         contributionsOnDay: 'contributiones hoc die',
         lastActive: 'Novissime activum',
         liveDemo: 'Demonstratio Viva',

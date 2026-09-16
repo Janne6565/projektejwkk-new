@@ -18,7 +18,7 @@ export default {
         heroTitle: 'Janne Keipert',
         gridTitle: 'Projects',
         contributions: 'contributions',
-        contributionsSince: 'contributions since',
+        contributionsAsOf: 'contributions as of',
         contributionsOnDay: 'contributions on this day',
         lastActive: 'Last active',
         liveDemo: 'Live Demo',

@@ -321,7 +321,7 @@ const StarSky = ({
           <span ref={countRef} className="font-semibold text-foreground">
             0
           </span>{' '}
-                    {t('projects.contributionsSince')}
+                    {t('projects.contributionsAsOf')}
                 </p>
                 <p
                     ref={dateRef}

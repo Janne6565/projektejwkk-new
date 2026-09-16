@@ -25,7 +25,7 @@ export default {
         heroTitle: 'Janne Keipert',
         gridTitle: toSGA('Projects'),
         contributions: toSGA('contributions'),
-        contributionsSince: toSGA('contributions since'),
+        contributionsAsOf: toSGA('contributions as of'),
         contributionsOnDay: toSGA('contributions on this day'),
         lastActive: toSGA('Last active'),
         liveDemo: toSGA('Live Demo'),

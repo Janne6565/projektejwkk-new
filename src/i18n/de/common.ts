@@ -24,7 +24,7 @@ export default {
         heroTitle: 'Janne Keipert',
         gridTitle: 'Projekte',
         contributions: 'Beiträge',
-        contributionsSince: 'Beiträge seit',
+        contributionsAsOf: 'Beiträge bis',
         contributionsOnDay: 'Beiträgee an diesem Tag',
         lastActive: 'Zuletzt aktiv',
         liveDemo: 'Live Demo',
